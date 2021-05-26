@@ -20,11 +20,11 @@
                     <Anchor point="LEFT" relativePoint="CENTER"/>
                 </Anchors>
             </Texture>
-            <FontString name="$parentRangeCount" inherits="NumberFontNormalLargeRightRed" justifyH="LEFT">
+            <FontString name="$parentRangeCount" inherits="NumberFontNormalLargeRight" justifyH="LEFT">
                 <Anchors>
                     <Anchor point="BOTTOMLEFT">
                         <Offset>
-                            <AbsDimension x="2" y="2"/>
+                            <AbsDimension x="4" y="4"/>
                         </Offset>
                     </Anchor>
                 </Anchors>

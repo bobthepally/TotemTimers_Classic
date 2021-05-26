@@ -409,3 +409,21 @@ function TotemTimers.UpdateMacro()
         macroNeedsUpdate = true
     end
 end
+
+
+function TotemTimers.UnitBuffs(unit)
+    local buffs = {}
+    for i=1, 40 do
+        local name, _, _, _, _, duration, expTime, caster, _, spellId = UnitBuff(unit, i)
+        if (name) then
+            table.insert(buffs, { 
+				["name"] = name,
+                ["duration"] = duration,
+                ["expTime"] = expTime,
+                ["caster"] = caster,
+                ["spellId"] = spellId,
+            })
+        end
+    end
+    return buffs
+end

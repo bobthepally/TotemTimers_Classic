@@ -417,6 +417,7 @@ function XiTimers:Stop(timer)
     end
     self.stopQuiet = false
 	timerbar.time:SetText("")
+	self.button.rangeCount:SetText("")
 	if self.visibleTimerBars then		
 		timerbar:SetValue(0)
 	end

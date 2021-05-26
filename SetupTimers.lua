@@ -105,19 +105,41 @@ function TotemTimers.CreateTimers()
 			end
         end
         
-        --[[ tt.Update = function(self, elapsed)
+        tt.Update = function(self, elapsed)
             XiTimers.Update(self, elapsed)
+			if not IsInGroup() then return end
             if self.timers[1] > 0 then
-                self:SetOutOfRange(not TotemTimers.GetPlayerRange(self.button.element))
+				--self:SetOutOfRange(not TotemTimers.GetPlayerRange(self.button.element))
                 --print(TotemTimers.GetPlayerRange(self.button.element))
-                local count = TotemTimers.GetOutOfRange(self.button.element)
+                --local count = TotemTimers.GetOutOfRange(self.button.element)
+                local count = 0
+				local units = { "player", "party1", "party2", "party3", "party4" }
+				for i, unit in pairs(units) do
+					local buffs = TotemTimers.UnitBuffs(unit)
+					for j, buff in pairs(buffs) do
+						
+						
+						if TotemTimers.AuraMapToProvider[buff.spellId] and 
+						   (string.match(self.button:GetAttribute("*spell1"), select(1,GetSpellInfo(TotemTimers.AuraMapToProvider[buff.spellId])))) then
+							count = count + 1
+						end
+					end
+				end
+
                 if count > 0 then
                     self.button.rangeCount:SetText(count)
+					if count > 4 then
+						self.button.rangeCount:SetTextColor(1,1,1,1)
+					else
+						self.button.rangeCount:SetTextColor(1,0,0,1)
+					end
+                else
+                    self.button.rangeCount:SetText("")
+                end
                 else
                     self.button.rangeCount:SetText("")
                 end
             end
-        end ]]
         
         --tt.button:UpdateMiniIconAndProfile()
         tt.button:SetScript("OnDragStop", function(self)
@@ -183,8 +205,8 @@ function TotemTimers:TotemEvent(event, arg1, arg2, arg3)
                     self.rangeCount:SetText("")
                 end --]]
             else
-                --[[ TotemTimers.ResetRange(self.element)
-                self.rangeCount:SetText("") --]]
+                -- TotemTimers.ResetRange(self.element)
+             --   self.rangeCount:SetText("") 
                 if self.timer.timers[1] > 0 then 
                     self.timer:Stop(1)
                 end
