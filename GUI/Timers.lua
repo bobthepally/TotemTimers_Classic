@@ -303,7 +303,7 @@ TotemTimers.options.args.timers = {
             set = function(info, val) TotemTimers.ActiveProfile.ShowCooldowns = val  TotemTimers.ProcessSetting("ShowCooldowns") end,
             get = function(info) return TotemTimers.ActiveProfile.ShowCooldowns end,                          
         },                                               
-        PlayerRange = {
+ --[[       PlayerRange = {
             order = 39,
             type = "toggle",
             name = L["Player Range"],
@@ -311,6 +311,7 @@ TotemTimers.options.args.timers = {
             set = function(info, val) TotemTimers.ActiveProfile.CheckPlayerRange = val  TotemTimers.ProcessSetting("CheckPlayerRange") end,
             get = function(info) return TotemTimers.ActiveProfile.CheckPlayerRange end,                          
         },                                               
+	]]
         RaidRange = {
             order = 40,
             type = "toggle",
@@ -319,7 +320,7 @@ TotemTimers.options.args.timers = {
             set = function(info, val) TotemTimers.ActiveProfile.CheckRaidRange = val  TotemTimers.ProcessSetting("CheckRaidRange") end,
             get = function(info) return TotemTimers.ActiveProfile.CheckRaidRange end,                          
         },                                               
-        RaidRangeTooltip = {
+    --[[    RaidRangeTooltip = {
             order = 41,
             type = "toggle",
             name = L["Raid Range Tooltip"],
@@ -327,6 +328,7 @@ TotemTimers.options.args.timers = {
             set = function(info, val) TotemTimers.ActiveProfile.ShowRaidRangeTooltip = val  TotemTimers.ProcessSetting("ShowRaidRangeTooltip") end,
             get = function(info) return TotemTimers.ActiveProfile.ShowRaidRangeTooltip end,                          
         },                                               
+	]]
     },
 }
 

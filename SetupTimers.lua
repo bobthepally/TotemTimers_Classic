@@ -104,10 +104,14 @@ function TotemTimers.CreateTimers()
 				self.button.icon:SetTexture(GetSpellTexture(TotemTimers.ActiveProfile.LastTotems[self.nr]))
 			end
         end
-        
+        tt.timeElapsed = 0
         tt.Update = function(self, elapsed)
             XiTimers.Update(self, elapsed)
-			if not IsInGroup() then return end
+			--
+			if  not IsInGroup() or not TotemTimers.ActiveProfile.CheckRaidRange then return end
+            tt.timeElapsed = tt.timeElapsed + elapsed
+			if (tt.timeElapsed > 0.2) then
+				tt.timeElapsed = 0
             if self.timers[1] > 0 then
 				--self:SetOutOfRange(not TotemTimers.GetPlayerRange(self.button.element))
                 --print(TotemTimers.GetPlayerRange(self.button.element))
@@ -140,6 +144,7 @@ function TotemTimers.CreateTimers()
                     self.button.rangeCount:SetText("")
                 end
             end
+        end 
         
         --tt.button:UpdateMiniIconAndProfile()
         tt.button:SetScript("OnDragStop", function(self)
