@@ -56,7 +56,7 @@ function TotemTimers.timerTooltip(self)
         GameTooltip:Show()
     elseif self:GetAttribute("tooltip") then
         local spell = self:GetAttribute("*spell1")
-		if spell and type(spell) == "string" then spell = TotemTimers.NameToSpellID[spell] end
+		if spell and type(spell) == "string" then spell = select(7, GetSpellInfo(spell)) end
         if spell and spell > 0 then
             TotemTimers.PositionTooltip(self)
             SetTooltipSpellID(spell)
@@ -67,7 +67,7 @@ end
 
 function TotemTimers.TotemTooltip(self)
     local spell = self:GetAttribute("*spell1")
-    if spell and type(spell) == "string" then spell = TotemTimers.NameToSpellID[spell] end
+    if spell and type(spell) == "string" then spell = select(7, GetSpellInfo(spell)) end
     TotemTimers.PositionTooltip(self)
     if spell and spell > 0 then
         SetTooltipSpellID(spell)

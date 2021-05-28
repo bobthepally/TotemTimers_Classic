@@ -124,7 +124,7 @@ function TotemTimers.CreateTimers()
 						
 						
 						if TotemTimers.AuraMapToProvider[buff.spellId] and 
-						   (string.match(self.button:GetAttribute("*spell1"), select(1,GetSpellInfo(TotemTimers.AuraMapToProvider[buff.spellId])))) then
+							   (string.match(select(1,GetSpellInfo(self.activeTotem)), select(1,GetSpellInfo(TotemTimers.AuraMapToProvider[buff.spellId])))) then
 							count = count + 1
 						end
 					end
