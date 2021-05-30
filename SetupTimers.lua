@@ -210,8 +210,8 @@ function TotemTimers:TotemEvent(event, arg1, arg2, arg3)
                     self.rangeCount:SetText("")
                 end --]]
             else
-                -- TotemTimers.ResetRange(self.element)
-             --   self.rangeCount:SetText("") 
+                --[[ TotemTimers.ResetRange(self.element)
+                self.rangeCount:SetText("") --]]
                 if self.timer.timers[1] > 0 then 
                     self.timer:Stop(1)
                 end

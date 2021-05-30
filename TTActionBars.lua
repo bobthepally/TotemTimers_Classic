@@ -52,13 +52,9 @@ function TTActionBars:new(numbuttons, parent, secondanchor, directionanchor, bar
 		b:SetHeight(36)
         
         --for rActionButtonStyler
-        b.action = 0 
-        b.SetCheckedTexture = function() end
-        if not IsAddOnLoaded("rActionButtonStyler") then
+        --b.action = 0
+        --b.SetCheckedTexture = function() end
             b:SetNormalTexture(nil)
-        else
-            ActionButton_Update(b)
-        end
         b.icon:Show()
 		
 		--[[b.ConfigAutoHide = function(self)

@@ -253,8 +253,8 @@ TotemData = {
     [TotemTimers.SpellIDs.WrathOfAir] = {
         element = AIR_TOTEM_SLOT,
         noRangeCheck = true,
-    }, 
-	
+    },
+
 }
 
 TotemTimers.NameToSpellID = {}
