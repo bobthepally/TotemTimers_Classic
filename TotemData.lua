@@ -315,3 +315,18 @@ TotemTimers.AuraMapToProvider = {
 	[25573] = 25574,
 	
 }
+
+TotemTimers.WEMapToProvider = {
+ -- Windfury Totem
+        [564] = 8512,
+		[563] = 8512,
+		[1783] = 8512,
+		[2638] = 8512,
+		[2639] = 8512,
+ -- Flametongue Totem
+        [124] = 8227, 
+		[285] = 8227, 
+		[543] = 8227, 
+		[1683] = 8227,
+		[2637] = 8227,
+}

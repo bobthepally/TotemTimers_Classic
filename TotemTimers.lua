@@ -16,6 +16,7 @@
 if select(2,UnitClass("player")) ~= "SHAMAN" then return end
 
 TotemTimers.timers = XiTimers
+TotemTimers.party = {}
 
 local warnings = nil
 
@@ -81,6 +82,9 @@ local function TotemTimers_OnEvent(self, event, ...)
     elseif event == "UPDATE_BINDINGS" then
         ClearOverrideBindings(TotemTimersFrame)
         TotemTimers.InitializeBindings()
+	elseif event == "CHAT_MSG_ADDON" then
+		local pfx = select(1, ...)
+		if pfx == "WF_STATUS" then TotemTimers.onWF_STATUS(...) end
 	end
 
 end
@@ -138,6 +142,7 @@ function TotemTimers.SetupGlobals()
         TotemTimersFrame:RegisterEvent("PLAYER_LEAVING_WORLD")
         TotemTimersFrame:RegisterEvent("UPDATE_BINDINGS")
         -- TotemTimersFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+		TotemTimersFrame:RegisterEvent("CHAT_MSG_ADDON")
 
         --TotemTimers_UpdateRaid()
 		TotemTimers.InitMasque()
@@ -437,4 +442,23 @@ function TotemTimers.UnitBuffs(unit)
         end
     end
     return buffs
+end
+
+TotemTimers.onWF_STATUS = function(pfx, msg, ch, src, tgt, ...) 
+    local tGUID, tID, tExpire, tLag, tExtra = strsplit(':', msg)
+    local pty = TotemTimers.party
+
+	
+	
+	if tID == 'nil' then tID = -1 end
+	tID = tonumber(tID)
+	if tExpire == 'nil' then tExpire = -1 end
+	tExpire = tonumber(tExpire) - (tonumber(tLag) / 1000)
+	for t = 1,4 do
+		if not pty[t] then pty[t] = {} end
+		if UnitGUID('party'..t) and tGUID == UnitGUID('party'..t) then
+			pty[t].tID = tID
+			pty[t].tExpire = tExpire 
+		end
+	end
 end

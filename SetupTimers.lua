@@ -107,32 +107,36 @@ function TotemTimers.CreateTimers()
         tt.timeElapsed = 0
         tt.Update = function(self, elapsed)
             XiTimers.Update(self, elapsed)
-			--
 			if  not IsInGroup() or not TotemTimers.ActiveProfile.CheckRaidRange then return end
             tt.timeElapsed = tt.timeElapsed + elapsed
 			if (tt.timeElapsed > 0.2) then
 				tt.timeElapsed = 0
             if self.timers[1] > 0 then
-				--self:SetOutOfRange(not TotemTimers.GetPlayerRange(self.button.element))
-                --print(TotemTimers.GetPlayerRange(self.button.element))
-                --local count = TotemTimers.GetOutOfRange(self.button.element)
                 local count = 0
+					local wf = false
+					if self.activeTotem == 8512 or  self.activeTotem == 8227 then
+						local pty = TotemTimers.party
+						wf = true
+						for t = 1,4 do
+							if pty[t] and pty[t].tID and TotemTimers.WEMapToProvider[pty[t].tID] ==  self.activeTotem and pty[t].tExpire > 1000 then
+								count = count + 1
+							end
+						end
+					else
 				local units = { "player", "party1", "party2", "party3", "party4" }
 				for i, unit in pairs(units) do
 					local buffs = TotemTimers.UnitBuffs(unit)
-					for j, buff in pairs(buffs) do
-						
-						
+							for j, buff in pairs(buffs) do			
 						if TotemTimers.AuraMapToProvider[buff.spellId] and 
 							   (string.match(select(1,GetSpellInfo(self.activeTotem)), select(1,GetSpellInfo(TotemTimers.AuraMapToProvider[buff.spellId])))) then
 							count = count + 1
 						end
 					end
 				end
-
+					end
                 if count > 0 then
                     self.button.rangeCount:SetText(count)
-					if count > 4 then
+						if count == GetNumGroupMembers() or (wf and count == GetNumGroupMembers() -1 ) then
 						self.button.rangeCount:SetTextColor(1,1,1,1)
 					else
 						self.button.rangeCount:SetTextColor(1,0,0,1)
