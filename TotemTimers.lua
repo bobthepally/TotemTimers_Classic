@@ -399,19 +399,24 @@ function TotemTimers.UpdateMacro()
 		_, free = GetNumMacros()
 		if nrBuff~=0 or free<18 then
 			local we = TotemTimers.ActiveProfile.LastWeaponEnchant
-			local spell
+			local spell1, spell2
 			if XiTimers.timers[8].numtimers > 1 then
 				if we == 5 then
-					spell = TotemTimers.SpellNames[TotemTimers.SpellIDs.WindfuryWeapon] .. ", " .. TotemTimers.SpellNames[TotemTimers.SpellIDs.FlametongueWeapon]
+					spell1 = TotemTimers.SpellNames[TotemTimers.SpellIDs.WindfuryWeapon]
+					spell2 = TotemTimers.SpellNames[TotemTimers.SpellIDs.FlametongueWeapon]
 				elseif we == 6 then
-					spell = TotemTimers.SpellNames[TotemTimers.SpellIDs.WindfuryWeapon] .. ", " .. TotemTimers.SpellNames[TotemTimers.SpellIDs.FrostbrandWeapon]
+					spell1 = TotemTimers.SpellNames[TotemTimers.SpellIDs.WindfuryWeapon]
+					spell2 = TotemTimers.SpellNames[TotemTimers.SpellIDs.FrostbrandWeapon]
 				else
-					spell = we .. ", " .. we
+					spell1 = we 
+					spell2 = we
 				end
 			else
-				spell = we
+				spell1 = we
 			end
-			sequence = "/castsequence reset=combat/5  " .. TotemTimers.ActiveProfile.ShieldLeftButton .. ", " .. spell
+			sequence = "/castsequence [nomod] reset=combat/5  " .. TotemTimers.ActiveProfile.ShieldLeftButton .. ", " .. spell1
+			if XiTimers.timers[8].numtimers > 1 then sequence = sequence .. "\n/cast [@none,mod] " .. spell2 end
+			sequence = sequence .. "\n/use [nomod] 16; [mod] 17\n/click StaticPopup1Button1"
 			local nr = GetMacroIndexByName("TT Buff")
 			if nr == 0 then
 				CreateMacro("TT Buff", "INV_MISC_QUESTIONMARK", sequence, 1)

@@ -211,16 +211,23 @@ SettingsFunctions = {
     function(value, Timers)
         if value == 5 then
             Timers[8].button:SetAttribute("type1", "macro")
-            Timers[8].button:SetAttribute("macrotext", "/cast "..SpellNames[SpellIDs.WindfuryWeapon].."\n/use 16")
+            Timers[8].button:SetAttribute("macrotext", "/cast [@none] "..SpellNames[SpellIDs.WindfuryWeapon].."\n/use 16\n/click StaticPopup1Button1")
             Timers[8].button:SetAttribute("doublespell1", SpellNames[SpellIDs.WindfuryWeapon])
             Timers[8].button:SetAttribute("doublespell2", SpellNames[SpellIDs.FlametongueWeapon])
             Timers[8].button:SetAttribute("ds", 1)
         elseif value == 6 then
             Timers[8].button:SetAttribute("type1", "macro")
-            Timers[8].button:SetAttribute("macrotext", "/cast "..SpellNames[SpellIDs.WindfuryWeapon].."\n/use 16")
-            Timers[8].button:SetAttribute("*spell1", SpellNames[SpellIDs.WindfuryWeapon])
+            Timers[8].button:SetAttribute("macrotext", "/cast [@none] "..SpellNames[SpellIDs.WindfuryWeapon].."\n/use 16\n/click StaticPopup1Button1")
+            --Timers[8].button:SetAttribute("*spell1", SpellNames[SpellIDs.WindfuryWeapon])
             Timers[8].button:SetAttribute("doublespell1", SpellNames[SpellIDs.WindfuryWeapon])
             Timers[8].button:SetAttribute("doublespell2", SpellNames[SpellIDs.FrostbrandWeapon])
+            Timers[8].button:SetAttribute("ds", 1)
+        elseif XiTimers.timers[8].numtimers > 1 then
+			Timers[8].button:SetAttribute("type1", "macro")
+            Timers[8].button:SetAttribute("macrotext", "/cast [@none] "..value.."\n/use 16\n/click StaticPopup1Button1")
+           -- Timers[8].button:SetAttribute("*spell1", value)
+            Timers[8].button:SetAttribute("doublespell1", value)
+            Timers[8].button:SetAttribute("doublespell2", value)
             Timers[8].button:SetAttribute("ds", 1)
         else
             Timers[8].button:SetAttribute("type1", "spell")

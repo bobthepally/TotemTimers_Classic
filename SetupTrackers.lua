@@ -122,12 +122,15 @@ function TotemTimers.CreateTrackers()
 --         elseif name == "spell2" or name == "spell3" then
 --             TotemTimers.ActiveProfile.LastWeaponEnchant2 = self:GetAttribute("spell2") or self:GetAttribute("spell3")
         elseif name == "doublespell2" then
+            local ds1 = self:GetAttribute("doublespell1")
             local ds2 = self:GetAttribute("doublespell2")
             if ds2 then
-                if ds2 == SpellNames[SpellIDs.FlametongueWeapon] then
+                if ds1~=ds2 and ds2 == SpellNames[SpellIDs.FlametongueWeapon] then
                     TotemTimers.ActiveProfile.LastWeaponEnchant = 5
-                elseif ds2 == SpellNames[SpellIDs.FrostbrandWeapon] then
+                elseif ds1~=ds2 and ds2 == SpellNames[SpellIDs.FrostbrandWeapon] then
                     TotemTimers.ActiveProfile.LastWeaponEnchant = 6
+				else
+					TotemTimers.ActiveProfile.LastWeaponEnchant = ds1
                 end
             end
         end
@@ -159,10 +162,10 @@ function TotemTimers.CreateTrackers()
                                                                 local ds1 = self:GetAttribute("doublespell1")
                                                                 if ds1 then
                                                                     if IsControlKeyDown() or self:GetAttribute("ds") ~= 1 then
-                                                                        self:SetAttribute("macrotext", "/cast "..ds1) --.."\n/use 16")
+                                                                        self:SetAttribute("macrotext", "/cast [@none] ".. ds1 .."\n/use 16\n/click StaticPopup1Button1")
 																		self:SetAttribute("ds",1)
                                                                     else
-                                                                        self:SetAttribute("macrotext", "/cast "..self:GetAttribute("doublespell2")) --.."\n/use 17")
+                                                                        self:SetAttribute("macrotext", "/cast [@none] "..self:GetAttribute("doublespell2").."\n/use 17\n/click StaticPopup1Button1")
 																		self:SetAttribute("ds",2)
                                                                     end
                                                                 end
@@ -331,20 +334,35 @@ end
 
 function TotemTimers.SetWeaponTrackerSpells()
     WeaponBar:ResetSpells()
+    local _,_,_,_,rank = GetTalentInfo(2,18)
+	
     if  AvailableSpells[SpellIDs.WindfuryWeapon] then
+        if (rank < 1 ) then 
         WeaponBar:AddSpell(SpellNames[SpellIDs.WindfuryWeapon])
+		else
+			WeaponBar:AddDoubleSpell(SpellNames[SpellIDs.WindfuryWeapon],SpellNames[SpellIDs.WindfuryWeapon])
+		end
     end
     if AvailableSpells[SpellIDs.RockbiterWeapon] then
         WeaponBar:AddSpell(SpellNames[SpellIDs.RockbiterWeapon])
     end
     if  AvailableSpells[SpellIDs.FlametongueWeapon] then
+		if (rank < 1 ) then 
         WeaponBar:AddSpell(SpellNames[SpellIDs.FlametongueWeapon])
+		else
+			WeaponBar:AddDoubleSpell(SpellNames[SpellIDs.FlametongueWeapon],SpellNames[SpellIDs.FlametongueWeapon])
+		end
     end
     if  AvailableSpells[SpellIDs.FrostbrandWeapon] then
+		if (rank < 1 ) then 
         WeaponBar:AddSpell(SpellNames[SpellIDs.FrostbrandWeapon])
+		else
+			WeaponBar:AddDoubleSpell(SpellNames[SpellIDs.FrostbrandWeapon],SpellNames[SpellIDs.FrostbrandWeapon])
     end
 
-    local _,_,_,_,rank = GetTalentInfo(2,18)
+    end
+
+    
 
     if (rank > 0) then
         if  AvailableSpells[SpellIDs.WindfuryWeapon] and AvailableSpells[SpellIDs.FlametongueWeapon] then

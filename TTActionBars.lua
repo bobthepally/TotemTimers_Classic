@@ -167,7 +167,7 @@ function TTActionBars:new(numbuttons, parent, secondanchor, directionanchor, bar
                                                         self:GetParent():SetAttribute("doublespell1", self:GetAttribute("doublespell1"))
                                                         self:GetParent():SetAttribute("doublespell2", self:GetAttribute("doublespell2"))
                                                         self:GetParent():SetAttribute("type1", "macro")
-                                                        self:GetParent():SetAttribute("macrotext", "/cast "..self:GetAttribute("doublespell1").."\n/use 16")
+                                                        self:GetParent():SetAttribute("macrotext", "/cast [@none] "..self:GetAttribute("doublespell1").."\n/use 16\n/click StaticPopup1Button1")
                                                         self:GetParent():SetAttribute("ds",1)
                                                     end
                                                 end
@@ -251,6 +251,8 @@ function TTActionBars:AddDoubleSpell(spell1,spell2)
     local _,_,texture2 = GetSpellInfo(spell2)
 	button:SetAttribute("doublespell1", spell1)
     button:SetAttribute("doublespell2", spell2)
+	button:SetAttribute("type1", "macro")
+    button:SetAttribute("macrotext", "/cast [@none] "..spell1.."\n/use 16\n/click StaticPopup1Button1")
 	button:SetAttribute("inactive", false)
     button.icon:SetTexture(texture)
     button.icon2:SetTexture(texture2)
