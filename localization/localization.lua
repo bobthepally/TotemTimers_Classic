@@ -18,21 +18,24 @@ if not L then return end
 
 L["Air Button"] = true
 L["Cooldown"] = true
-L["Ctrl-Leftclick to remove weapon buffs"] = true
+L["Ctrl-Leftclick remove MainHand buff"] = true
+L["Ctrl-Rightclick remove OffHand buff"] = true
 L["Delete Set"] = "Delete Totem Set %u?"
 L["Earth Button"] = true
 L["Fire Button"] = true
-L["Leftclick to cast %s"] = true
+L["Leftclick: %s"] = true
 L["Leftclick to cast spell"] = true
 L["Leftclick to load totem set"] = true
 L["Leftclick to open totem set menu"] = true
 L["Long Cooldown"] = true
 L["Maelstrom Notifier"] = "Maelstrom ready!"
 L["Middleclick to cast %s"] = true
-L["Next leftclick casts %s"] = true
+L["Next Leftclick: %s"] = true
 L["Reset"] = "TotemTimers has been reset!"
 L["Rightclick to assign both %s and %s to leftclick"] = true
 L["Rightclick to assign spell to leftclick"] = true
+L["Rightclick to assign spell to weapontimer"] = true
+L["Rightclick to assign doublespell to weapontimer"] = true
 L["Rightclick to assign totem to timer button"] = true
 L["Rightclick to cast %s"] = true
 L["Rightclick to delete totem set"] = true

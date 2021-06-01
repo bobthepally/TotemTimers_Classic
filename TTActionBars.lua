@@ -50,10 +50,6 @@ function TTActionBars:new(numbuttons, parent, secondanchor, directionanchor, bar
 		b:ClearAllPoints()
 		b:SetWidth(36)
 		b:SetHeight(36)
-        
-        --for rActionButtonStyler
-        --b.action = 0
-        --b.SetCheckedTexture = function() end
             b:SetNormalTexture(nil)
         b.icon:Show()
 		
@@ -94,8 +90,11 @@ function TTActionBars:new(numbuttons, parent, secondanchor, directionanchor, bar
 		b:SetAttribute("*type1", "spell")
         b:SetAttribute("*type2", nil)
 		
+		if bartype ~= "weapontimer" then 
         b.ShowTooltip = TotemTimers.TotemTooltip		 
-		
+		else
+			b.ShowTooltip = TotemTimers.WeaponBarTooltip		 
+		end
         b.HideTooltip = function(self) GameTooltip:Hide() end
         
         b:SetAttribute("_onattributechanged", [[ if name=="inactive" then 

@@ -76,6 +76,11 @@ function TotemTimers.CreateTrackers()
     shield.button:SetAttribute("*spell1", SpellNames[SpellIDs.LightningShield])
     shield.button:SetAttribute("*spell2", SpellNames[SpellIDs.WaterShield])
     shield.button:SetAttribute("*spell3", SpellNames[SpellIDs.TotemicCall])
+	shield.button.ShowTooltip = TotemTimers.ShieldTooltip
+	shield.button.HideTooltip = TotemTimers.HideTooltip
+	shield.button:SetAttribute("_onenter", [[ if self:GetAttribute("tooltip") then control:CallMethod("ShowTooltip") end]])
+	shield.button:SetAttribute("_onleave", [[ control:CallMethod("HideTooltip") ]])
+	
     shield.button:SetScript("OnDragStop", function(self)
         XiTimers.StopMoving(self)
     end)
@@ -376,44 +381,8 @@ end
 
 local mainMsg = ""
 local offMsg = ""
-
-
-local WeaponEnchants = {
-    [3] = SpellIDs.FlametongueWeapon,
-    [4] = SpellIDs.FlametongueWeapon,
-    [5] = SpellIDs.FlametongueWeapon,
-    [523] = SpellIDs.FlametongueWeapon,
-    [1665] = SpellIDs.FlametongueWeapon,
-    [1666] = SpellIDs.FlametongueWeapon,
-    [2634] = SpellIDs.FlametongueWeapon,
-    [1] = SpellIDs.RockbiterWeapon,
-    [6] = SpellIDs.RockbiterWeapon,
-    [29] = SpellIDs.RockbiterWeapon,
-    [503] = SpellIDs.RockbiterWeapon,
-    [683] = SpellIDs.RockbiterWeapon,
-    [1663] = SpellIDs.RockbiterWeapon,
-    [1664] = SpellIDs.RockbiterWeapon,
-    [2632] = SpellIDs.RockbiterWeapon,
-    [2633] = SpellIDs.RockbiterWeapon,
-    [283] = SpellIDs.WindfuryWeapon,
-    [284] = SpellIDs.WindfuryWeapon,
-    [525] = SpellIDs.WindfuryWeapon,
-    [1669] = SpellIDs.WindfuryWeapon,
-    [2636] = SpellIDs.WindfuryWeapon,
-    [2] = SpellIDs.FrostbrandWeapon,
-    [12] = SpellIDs.FrostbrandWeapon,
-    [5244] = SpellIDs.FrostbrandWeapon,
-    [1667] = SpellIDs.FrostbrandWeapon,
-    [1668] = SpellIDs.FrostbrandWeapon,
-    [2635] = SpellIDs.FrostbrandWeapon,
-}
-
-
-
 local GetWeaponEnchantInfo = GetWeaponEnchantInfo
-
 local Enchanted, CastEnchant, CastTexture
-
 
 local function SetWeaponEnchantTextureAndMsg(self, enchant, texture, nr)
     self.icons[nr]:SetTexture(texture)
@@ -424,6 +393,7 @@ end
 
 function TotemTimers.WeaponUpdate(self, elapsed)
     local enchant, expiration, _, mainID, offenchant, offExpiration, _, offID = GetWeaponEnchantInfo()
+	local WeaponEnchants = TotemTimers.WeaponEnchants
     for k,v in pairs({{enchant, expiration, mainID}, {offenchant, offExpiration, offID}}) do
         if v[1] then
             if v[2]/1000 > self.timers[k] then
