@@ -76,7 +76,7 @@ TotemTimers.options = {
                     set = function(info, val) TotemTimers.ActiveProfile.HideBlizzTimers = val TotemTimers.ProcessSetting("HideBlizzTimers") end,
                     get = function(info) return TotemTimers.ActiveProfile.HideBlizzTimers end,
                 },                  
-                hidedefaulttotembar = {
+ --[[               hidedefaulttotembar = {
                     order = 3,
                     type = "toggle",
                     name = L["Hide Default Totem Bar"],
@@ -85,6 +85,7 @@ TotemTimers.options = {
                             TotemTimers.ProcessSetting("HideDefaultTotemBar") end,
                     get = function(info) return TotemTimers.ActiveProfile.HideDefaultTotemBar  end,
                 },                  
+]]
                 tooltips = {
                     order = 3,
                     type = "toggle",

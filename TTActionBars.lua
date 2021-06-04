@@ -91,7 +91,7 @@ function TTActionBars:new(numbuttons, parent, secondanchor, directionanchor, bar
         b:SetAttribute("*type2", nil)
 		
 		if bartype ~= "weapontimer" then 
-        b.ShowTooltip = TotemTimers.TotemTooltip		 
+			b.ShowTooltip = TotemTimers.TotemTooltip
 		else
 			b.ShowTooltip = TotemTimers.WeaponBarTooltip		 
 		end
