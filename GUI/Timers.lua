@@ -230,6 +230,48 @@ TotemTimers.options.args.timers = {
                   end,
             get = function(info) return TotemTimers.ActiveProfile.TotemMenuSpacing end,
         },
+		AffectedFontSize = {
+            order = 17,
+            type = "range",
+            name = L["Affected counter font size"],
+            desc = L["Affected counter font size Desc"],
+            min = 1,
+            max = 48,
+            step = 1,
+            set = function(info, val)
+                        TotemTimers.ActiveProfile.AffectedFontSize = val TotemTimers.ProcessSetting("AffectedFontSize")
+                  end,
+            get = function(info) return TotemTimers.ActiveProfile.AffectedFontSize end,
+        },
+		
+		AffectedPositionX = 
+		{
+            order = 18,
+            type = "range",
+            name = L["Affected counter position X"],
+            desc = L["Affected counter position X Desc"],
+            min = -64,
+            max = 64,
+            step = 1,
+            set = function(info, val)
+                        TotemTimers.ActiveProfile.AffectedPositionX = val TotemTimers.ProcessSetting("AffectedPositionX")
+                  end,
+            get = function(info) return TotemTimers.ActiveProfile.AffectedPositionX end,
+        },
+		AffectedPositionY = 
+		{
+            order = 18,
+            type = "range",
+            name = L["Affected counter position Y"],
+            desc = L["Affected counter position Y Desc"],
+            min = -64,
+            max = 64,
+            step = 1,
+            set = function(info, val)
+                        TotemTimers.ActiveProfile.AffectedPositionY = val TotemTimers.ProcessSetting("AffectedPositionY")
+                  end,
+            get = function(info) return TotemTimers.ActiveProfile.AffectedPositionY end,
+        },
         advanced = {
             order = 30,
             type = "header",
@@ -327,7 +369,7 @@ TotemTimers.options.args.timers = {
             desc = L["RR Tooltip Desc"],
             set = function(info, val) TotemTimers.ActiveProfile.ShowRaidRangeTooltip = val  TotemTimers.ProcessSetting("ShowRaidRangeTooltip") end,
             get = function(info) return TotemTimers.ActiveProfile.ShowRaidRangeTooltip end,                          
-        },                                               
+        }, 
 	]]
     },
 }

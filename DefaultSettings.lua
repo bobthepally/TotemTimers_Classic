@@ -42,6 +42,9 @@ TotemTimers.DefaultProfile = {
         FulminationAura = true,
         FulminationGlow = true,
 	CooldownAlpha = 0.8,
+	AffectedFontSize = 14,
+	AffectedPositionX = 4,
+	AffectedPositionY = 4,
         
         LastTotems = {
             [WATER_TOTEM_SLOT] = SpellNames[SpellIDs.HealingStream],

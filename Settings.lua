@@ -731,7 +731,29 @@ SettingsFunctions = {
                     bar.buttons[i].cooldown:SetAlpha(value)
                 end
             end
+        end,
+	AffectedFontSize =
+        function(value, Timers)
+            for i=1,#Timers do
+                Timers[i].button.rangeCount:SetFont(Timers[i].button.rangeCount:GetFont(), value)
+            end
+        end,
+	AffectedPositionX = 
+		function(value, Timers)
+            for i=1,#Timers do
+				local point, relativeTo, relativePoint, xOfs, yOfs = Timers[i].button.rangeCount:GetPoint()
+				Timers[i].button.rangeCount:ClearAllPoints()
+                Timers[i].button.rangeCount:SetPoint(point, relativeTo, relativePoint, value, yOfs)
+            end
+        end,
+	AffectedPositionY = 
+		function(value, Timers)
+            for i=1,#Timers do
+				local point, relativeTo, relativePoint, xOfs, yOfs = Timers[i].button.rangeCount:GetPoint()
+				Timers[i].button.rangeCount:ClearAllPoints()
+                Timers[i].button.rangeCount:SetPoint(point, relativeTo, relativePoint, xOfs, value)
         end
+        end,
         
 }
 

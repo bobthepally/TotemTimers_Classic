@@ -301,6 +301,7 @@ function TotemTimers.OrderTimers()
             pos[c] = Timers[e]
 		end
 	end
+	TotemTimers.UpdateMacro()
 end
 
 
