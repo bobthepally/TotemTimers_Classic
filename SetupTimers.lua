@@ -165,9 +165,8 @@ end
 local Cooldowns = {
     [EARTH_TOTEM_SLOT] = {
         [2] = SpellIDs.EarthBind,
-        [3] = SpellIDs.Tremor,
-        [4] = SpellIDs.Stoneclaw,
-		[5] = SpellIDs.EarthElemental,
+        [3] = SpellIDs.Stoneclaw,
+	[4] = SpellIDs.EarthElemental,
     },
     [WATER_TOTEM_SLOT] = {
         [2] = SpellIDs.ManaTide,
@@ -177,6 +176,7 @@ local Cooldowns = {
 	[3] = SpellIDs.FireElemental,
     },
     [AIR_TOTEM_SLOT] = {
+	[2] = SpellIDs.Grounding,
     },
 }
 

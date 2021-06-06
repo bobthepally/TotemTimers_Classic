@@ -61,7 +61,8 @@ L["Timers On Buttons"] = true
 L["Timers on Buttons is now set in Game Options -> Actionbars -> Show Numbers on Cooldowns"] = true
 L["Tooltips At Buttons"] = true
 L["Tooltips At Buttons Desc"] = "Shows Tooltips to the right of TT's buttons."
-
+L["Cooldown Opacity"] = true
+L["Opacity of the cooldown swirls"] = true
 L["Advanced Options"] = true
 L["Always Visible Desc"] = "Totem menus are always visible and can be dragged around like action bars."
 L["Arrangement"] = true

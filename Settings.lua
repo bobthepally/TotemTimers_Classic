@@ -720,6 +720,18 @@ SettingsFunctions = {
 				v:SetSpacing(value)
 			end
         end, --]]
+	CooldownAlpha =
+        function(value, Timers)
+            for i=1,#Timers do
+                Timers[i].button.cooldown:SetAlpha(value)
+            end
+            for i=1, #TTActionBars.bars do
+                local bar = TTActionBars.bars[i]
+                for j = 1, #bar.buttons do
+                    bar.buttons[i].cooldown:SetAlpha(value)
+                end
+            end
+        end
         
 }
 
