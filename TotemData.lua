@@ -257,9 +257,11 @@ TotemData = {
 }
 
 TotemTimers.NameToSpellID = {}
+TotemTimers.NameToSpellIDL = {}
 for k,v in pairs(TotemTimers.SpellIDs) do
     if v and TotemTimers.SpellNames[v] then
         TotemTimers.NameToSpellID[TotemTimers.SpellNames[v]] = v
+		TotemTimers.NameToSpellIDL[string.lower(TotemTimers.SpellNames[v])] = v
     end
 end
 

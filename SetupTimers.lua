@@ -17,6 +17,7 @@ local BuffNames = TotemTimers.BuffNames
 local SpellNames = TotemTimers.SpellNames
 local TextureToName = TotemTimers.TextureToName
 local NameToSpellID = TotemTimers.NameToSpellID
+local NameToSpellIDL = TotemTimers.NameToSpellIDL
 local SpellIDs = TotemTimers.SpellIDs
 local AvailableSpells = TotemTimers.AvailableSpells
 
@@ -187,8 +188,8 @@ function TotemTimers:TotemEvent(event, arg1, arg2, arg3)
     if event == "PLAYER_TOTEM_UPDATE" then
     	if self.element == arg1 then
     		local _, totem, startTime, duration, icon = GetTotemInfo(arg1)
-            totem = string.gsub(totem, " [IV]*$", "") -- strip spell rank from name
-            totem = NameToSpellID[totem]
+            totem = string.lower(string.gsub(totem, " [IV]*$", "")) -- strip spell rank from name
+            totem = NameToSpellIDL[totem]
     		if duration > 0 and totem and TotemData[totem] then
     			self.icons[1]:SetTexture(icon)
                 self.timer.activeTotem = totem
