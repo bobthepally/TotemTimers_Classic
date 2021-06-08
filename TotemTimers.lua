@@ -162,7 +162,7 @@ function TotemTimers.SetupGlobals()
         TotemTimersFrame:SetScript("OnUpdate", XiTimers.UpdateTimers)
 		TotemTimersFrame:EnableMouse(false)
         XiTimers.InitWarnings(TotemTimers.ActiveProfile.Warnings)
-        -- TotemTimers.SetEarthShieldButtons()
+        TotemTimers.SetEarthShieldButtons()
         -- TotemTimers.LayoutCrowdControl()
         --TotemTimers.ApplySkin()
         XiTimers.SaveFramePositions = TotemTimers.SaveFramePositions
@@ -377,12 +377,12 @@ function TotemTimers.UpdateMacro()
 		local nrBuff = GetMacroIndexByName("TT Buff")
 		
         if  nrCast~=0 or free<18 then
-        local sequence = "/castsequence reset=combat/60  "
+			local sequence = "/castsequence reset=combat/"..TotemTimers.ActiveProfile.MacroReset.." ";
         local timers = XiTimers.timers
         for i=1,4 do
-			--_G.DevTools_Dump()
-				if timers[i].active then
-					local spell = timers[i].button:GetAttribute("*spell1")
+            local timer = timers[i]
+            if timer.active and TotemTimers.ActiveProfile.IncludeInMacro[timer.nr] then
+                local spell = timer.button:GetAttribute("*spell1")
                 if spell then
                     sequence = sequence .. spell..", "
                 end

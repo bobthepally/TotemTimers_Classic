@@ -114,12 +114,23 @@ TotemTimers.SpellIDs = {
 
 TotemTimers.SpellTextures = {}
 TotemTimers.SpellNames = {}
+TotemTimers.NameToSpellID = {}
+TotemTimers.TextureToSpellID = {}
+TotemTimers.NameToSpellIDL = {}
 
 for k,v in pairs(TotemTimers.SpellIDs) do
     local n,_,t = GetSpellInfo(v)
     TotemTimers.SpellTextures[v] = t
     TotemTimers.SpellNames[v] = n
+    if n then
+        TotemTimers.NameToSpellID[n] = v
+        TotemTimers.NameToSpellIDL[string.lower(n)] = v
+    end
+    if t then
+        TotemTimers.TextureToSpellID[t] = v
 end
+end
+
 
 
 --[[
@@ -256,14 +267,7 @@ TotemData = {
 
 }
 
-TotemTimers.NameToSpellID = {}
-TotemTimers.NameToSpellIDL = {}
-for k,v in pairs(TotemTimers.SpellIDs) do
-    if v and TotemTimers.SpellNames[v] then
-        TotemTimers.NameToSpellID[TotemTimers.SpellNames[v]] = v
-		TotemTimers.NameToSpellIDL[string.lower(TotemTimers.SpellNames[v])] = v
-    end
-end
+
 
 TotemTimers.AuraMapToProvider = {
 	[30708] = 30706,
