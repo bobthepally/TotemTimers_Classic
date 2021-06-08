@@ -115,6 +115,13 @@ function TotemTimers.CreateTimers()
             tt.timeElapsed = tt.timeElapsed + elapsed
 			if (tt.timeElapsed > 0.2) then
 				tt.timeElapsed = 0
+				for i = 1,4 do 
+					if UnitExists("Party"..i) then
+						local _, class = UnitClass("Party"..i)
+						if class then self.button.party[i]:SetVertexColor(RAID_CLASS_COLORS[class]:GetRGB()) end
+					end
+					self.button.party[i]:Hide() 
+				end				
             if self.timers[1] > 0 then
                 local count = 0
 					local wf = false
@@ -124,9 +131,13 @@ function TotemTimers.CreateTimers()
 						for t = 1,4 do
 							if pty[t] and pty[t].tID and TotemTimers.WEMapToProvider[pty[t].tID] ==  self.activeTotem and pty[t].tExpire > 1000 then
 								count = count + 1
+								if TotemTimers.ActiveProfile.PartyBuffStyle ~= "NUMBER" then
+								   self.button.party[t]:Show()
+								end
 							end
 						end
 					else
+						self.button.player:Show()
 				local units = { "player", "party1", "party2", "party3", "party4" }
 				for i, unit in pairs(units) do
 					local buffs = TotemTimers.UnitBuffs(unit)
@@ -134,11 +145,18 @@ function TotemTimers.CreateTimers()
 						if TotemTimers.AuraMapToProvider[buff.spellId] and 
 							   (string.match(select(1,GetSpellInfo(self.activeTotem)), select(1,GetSpellInfo(TotemTimers.AuraMapToProvider[buff.spellId])))) then
 							count = count + 1
+									if TotemTimers.ActiveProfile.PartyBuffStyle ~= "NUMBER" then
+										if i > 1 then 
+											self.button.party[i-1]:Show() 
+										else
+											self.button.player:Hide()
+										end
+									end
 						end
 					end
 				end
 					end
-                if count > 0 then
+					if count > 0 and TotemTimers.ActiveProfile.PartyBuffStyle ~= "ICON" then
                     self.button.rangeCount:SetText(count)
 						if count == GetNumGroupMembers() or (wf and count == GetNumGroupMembers() -1 ) then
 						self.button.rangeCount:SetTextColor(1,1,1,1)
@@ -362,9 +380,25 @@ function TotemTimers.CreateCastButtons()
                                                                             return "clear"
                                                                        end]])
         end
+		local timer = XiTimers.timers[i].button
+		timer.party = {}
+		for k = 1, 4 do
+			local tex = timer:CreateTexture()
+			tex:SetTexture("Interface\\AddOns\\TotemTimers\\dot")
+			tex:SetSize(7, 7)
+			tex:Hide()
+			timer.party[k] = tex
+		end
+		timer.player = timer:CreateTexture()
+		timer.player:SetTexture("Interface\\AddOns\\TotemTimers\\dot")
+		timer.player:SetSize(7, 7)
+		timer.player:SetPoint("TOPLEFT",timer,"TOPLEFT",3,-3)
+		timer.player:SetVertexColor(1,0,0)
+		timer.player:Hide()
     end
     TotemTimers.PositionCastButtons()
     TotemTimers.SetCastButtonSpells()
+	TotemTimers.ReorerPartyBuffs()	
 end
 
 
@@ -421,4 +455,23 @@ function TotemTimers.SetCastButtonSpells()
         end
         TTActionBars.bars[timer.nr]:SetSpells(SpellArray, true)
 	end
+end
+
+local PartyBuffRelatives = {["TOP"] = {"BOTTOMLEFT", "TOPLEFT", "LEFT", "RIGHT",2,0}, ["LEFT"] = {"TOPRIGHT", "TOPLEFT", "TOP", "BOTTOM",0,-2},
+                            ["BOTTOM"] = {"TOPLEFT", "BOTTOMLEFT", "LEFT", "RIGHT",2,0}, ["RIGHT"] = {"TOPLEFT", "TOPRIGHT", "TOP", "BOTTOM",0,-2}}
+
+function TotemTimers.ReorerPartyBuffs()	
+	local side = TotemTimers.ActiveProfile.PartyBuffSide
+	for i=1,4 do
+		local btn = XiTimers.timers[i].button
+		for i=1,4 do
+			btn.party[i]:ClearAllPoints()
+			if i == 1 then
+				btn.party[i]:SetPoint(PartyBuffRelatives[side][1], btn, PartyBuffRelatives[side][2],
+									  PartyBuffRelatives[side][5], PartyBuffRelatives[side][6])
+			else
+				btn.party[i]:SetPoint(PartyBuffRelatives[side][3], btn.party[i-1], PartyBuffRelatives[side][4])
+			end
+		end		
+	end							
 end

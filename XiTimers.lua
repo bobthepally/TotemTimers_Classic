@@ -413,6 +413,9 @@ function XiTimers:Stop(timer)
     end
     self.stopQuiet = false
 	timerbar.time:SetText("")
+	for i = 1,4 do if self.button.party then  self.button.party[i]:Hide() end end
+        if self.button.player then self.button.player:Hide() end
+
 	self.button.rangeCount:SetText("")
 	if self.visibleTimerBars then		
 		timerbar:SetValue(0)

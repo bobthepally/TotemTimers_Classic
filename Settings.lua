@@ -754,7 +754,10 @@ SettingsFunctions = {
                 Timers[i].button.rangeCount:SetPoint(point, relativeTo, relativePoint, xOfs, value)
         end
         end,
-        
+    PartyBuffSide = 
+		function(value, Timers)
+			TotemTimers.ReorerPartyBuffs()	
+		end
 }
 
 SettingsFunctions.ReverseBarBindings = SettingsFunctions.BarBindings

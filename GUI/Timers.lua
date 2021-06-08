@@ -230,8 +230,31 @@ TotemTimers.options.args.timers = {
                   end,
             get = function(info) return TotemTimers.ActiveProfile.TotemMenuSpacing end,
         },
+		PartyBuffStyle = {
+			order = 17,
+            type = "select",
+            name = L["Buff affected style"],
+            desc = L["Buff affected style Desc"],
+            values = {	["ICON"] = L["Color Point"], ["NUMBER"] = L["Number"], ["BOTH"] = L["Both"]},
+            set = function(info, val)
+                        TotemTimers.ActiveProfile.PartyBuffStyle = val 
+                  end,
+            get = function(info) return TotemTimers.ActiveProfile.PartyBuffStyle end,
+        },
+		PartyBuffSide = {
+			order = 17,
+            type = "select",
+            name = L["Buff color points Position"],
+            desc = L["Buff color points Position Desc"],
+            values = {	["LEFT"] = L["Left"], ["RIGHT"] = L["Right"], ["TOP"] = L["Top"], ["BOTTOM"] = L["Bottom"],},
+            set = function(info, val)
+                        TotemTimers.ActiveProfile.PartyBuffSide = val TotemTimers.ProcessSetting("PartyBuffSide")
+                  end,
+            get = function(info) return TotemTimers.ActiveProfile.PartyBuffSide end,
+        },
+		
 		AffectedFontSize = {
-            order = 17,
+            order = 20,
             type = "range",
             name = L["Affected counter font size"],
             desc = L["Affected counter font size Desc"],
@@ -243,10 +266,9 @@ TotemTimers.options.args.timers = {
                   end,
             get = function(info) return TotemTimers.ActiveProfile.AffectedFontSize end,
         },
-		
 		AffectedPositionX = 
 		{
-            order = 18,
+            order = 21,
             type = "range",
             name = L["Affected counter position X"],
             desc = L["Affected counter position X Desc"],
@@ -260,7 +282,7 @@ TotemTimers.options.args.timers = {
         },
 		AffectedPositionY = 
 		{
-            order = 18,
+            order = 22,
             type = "range",
             name = L["Affected counter position Y"],
             desc = L["Affected counter position Y Desc"],
