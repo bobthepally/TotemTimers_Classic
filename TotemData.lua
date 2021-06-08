@@ -128,10 +128,8 @@ for k,v in pairs(TotemTimers.SpellIDs) do
     end
     if t then
         TotemTimers.TextureToSpellID[t] = v
+    end
 end
-end
-
-
 
 --[[
 1 - Melee

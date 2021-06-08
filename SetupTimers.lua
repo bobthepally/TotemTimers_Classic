@@ -137,10 +137,12 @@ function TotemTimers.CreateTimers()
 							end
 						end
 					else
-						self.button.player:Show()
 				local units = { "player", "party1", "party2", "party3", "party4" }
 				for i, unit in pairs(units) do
 					local buffs = TotemTimers.UnitBuffs(unit)
+							if i == 1 and TotemTimers.ActiveProfile.PartyBuffStyle ~= "NUMBER" then
+								self.button.player:Show()
+							end
 							for j, buff in pairs(buffs) do			
 						if TotemTimers.AuraMapToProvider[buff.spellId] and 
 							   (string.match(select(1,GetSpellInfo(self.activeTotem)), select(1,GetSpellInfo(TotemTimers.AuraMapToProvider[buff.spellId])))) then

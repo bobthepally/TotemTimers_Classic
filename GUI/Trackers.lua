@@ -314,7 +314,7 @@ TotemTimers.options.args.trackers = {
                             get = function(info) return TotemTimers.ActiveProfile.ESMainTankMenuDirection end,
                         },
                     },
-                },                
+                },
                 weapons = {
                     order = 4,
                     name = L["Weapon Buff Tracker"],

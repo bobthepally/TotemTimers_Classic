@@ -629,7 +629,7 @@ function TotemTimers.SetEarthShieldMainTankList()
         for i = 1, 25 do
             local unit = "raid" .. i
             if UnitExists(unit) then
-                if (GetPartyAssignment("MAINTANK", unit) or UnitGroupRolesAssigned(unit) == "TANK") and b < 4 then
+                if (GetPartyAssignment("MAINTANK", unit)) and b < 4 then
                     b = b + 1
                     earthshieldTimer.bar:AddSpell(SpellIDs.EarthShield)
                     SetUnit(unit, earthshieldTimer.bar.buttons[b])
