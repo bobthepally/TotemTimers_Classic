@@ -149,7 +149,7 @@ TotemData = {
     },
     [TotemTimers.SpellIDs.Stoneskin] = {
         element = EARTH_TOTEM_SLOT,
-        noRangeCheck = true,
+        noRangeCheck = false,
     },
     [TotemTimers.SpellIDs.Stoneclaw] = {
         element = EARTH_TOTEM_SLOT,
@@ -158,7 +158,7 @@ TotemData = {
     },
     [TotemTimers.SpellIDs.StrengthOfEarth] = {
         element = EARTH_TOTEM_SLOT,
-        noRangeCheck = true,
+         noRangeCheck = false,
     },
     [TotemTimers.SpellIDs.EarthBind] = {
         element = EARTH_TOTEM_SLOT,
@@ -186,11 +186,11 @@ TotemData = {
 	},
     [TotemTimers.SpellIDs.FrostResistance] = {
         element = FIRE_TOTEM_SLOT,
-        noRangeCheck = true,
+         noRangeCheck = false,
     },
     [TotemTimers.SpellIDs.Flametongue] = {
         element = FIRE_TOTEM_SLOT,
-        noRangeCheck = true,
+         noRangeCheck = false,
     },
     [TotemTimers.SpellIDs.FireElemental] = {
         element = FIRE_TOTEM_SLOT,
@@ -198,16 +198,18 @@ TotemData = {
     },
     [TotemTimers.SpellIDs.Wrath] = {
         element = FIRE_TOTEM_SLOT,
-        noRangeCheck = true,
+         noRangeCheck = false,
     },
     [TotemTimers.SpellIDs.HealingStream] = {
 		element = WATER_TOTEM_SLOT,
         range = 1600,
-		warningPoint = 4,
+		warningPoint = 4, 
+		noRangeCheck = false,
 	},
     [TotemTimers.SpellIDs.ManaTide] = {
         element = WATER_TOTEM_SLOT,
         warningPoint = 2,
+		noRangeCheck = false,
     },
     [TotemTimers.SpellIDs.PoisonCleansing] = {
         element = WATER_TOTEM_SLOT,
@@ -221,11 +223,11 @@ TotemData = {
     },
     [TotemTimers.SpellIDs.ManaSpring] = {
         element = WATER_TOTEM_SLOT,
-        noRangeCheck = true,
+         noRangeCheck = false,
     },
     [TotemTimers.SpellIDs.FireResistance] = {
         element = WATER_TOTEM_SLOT,
-        noRangeCheck = true,
+        noRangeCheck = false,
     },
 	[TotemTimers.SpellIDs.Grounding] = {
 		element = AIR_TOTEM_SLOT,
@@ -233,14 +235,15 @@ TotemData = {
         range = 100,
 		warningPoint = 5,
 		flashInterval = 10,
+		noRangeCheck = false,
 	},
     [TotemTimers.SpellIDs.NatureResistance] = {
         element = AIR_TOTEM_SLOT,
-        noRangeCheck = true,
+        noRangeCheck = false,
     },
     [TotemTimers.SpellIDs.Windfury] = {
         element = AIR_TOTEM_SLOT,
-        noRangeCheck = true,
+        noRangeCheck = false,
     },
     [TotemTimers.SpellIDs.Sentry] = {
         element = AIR_TOTEM_SLOT,
@@ -248,26 +251,26 @@ TotemData = {
     },
     [TotemTimers.SpellIDs.Windwall] = {
         element = AIR_TOTEM_SLOT,
-        noRangeCheck = true,
+        noRangeCheck = false,
     },
     [TotemTimers.SpellIDs.GraceOfAir] = {
         element = AIR_TOTEM_SLOT,
-        noRangeCheck = true,
+        noRangeCheck = false,
     },
     [TotemTimers.SpellIDs.TranquilAir] = {
         element = AIR_TOTEM_SLOT,
-        noRangeCheck = true,
+        noRangeCheck = false,
     },
     [TotemTimers.SpellIDs.WrathOfAir] = {
         element = AIR_TOTEM_SLOT,
-        noRangeCheck = true,
+        noRangeCheck = false,
     },
 
 }
 
+local sid = TotemTimers.SpellIDs
 
-
-TotemTimers.AuraMapToProvider = {
+local amtp = {
 	[30708] = 30706,
 	[25909] = 25908,
 	[5677] = 5675,
@@ -319,6 +322,13 @@ TotemTimers.AuraMapToProvider = {
 	
 }
 
+TotemTimers.AuraMapToProvider = {}
+
+for k,v in pairs(amtp) do
+    local n,_,t = GetSpellInfo(v)
+    TotemTimers.AuraMapToProvider[k] = TotemTimers.NameToSpellID[n]
+end
+
 TotemTimers.WEMapToProvider = {
  -- Windfury Totem
         [564] = 8512,
@@ -333,7 +343,7 @@ TotemTimers.WEMapToProvider = {
 		[1683] = 8227,
 		[2637] = 8227,
 }
-local sid = TotemTimers.SpellIDs
+
 
 TotemTimers.WeaponEnchants = {
     [3] = sid.FlametongueWeapon,

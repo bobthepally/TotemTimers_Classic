@@ -152,6 +152,11 @@ SettingsFunctions = {
     		end  
         end,
         
+	CastBarDirection = 
+		function(value, Timers)
+			TotemTimers.PositionCastButtons()
+		end,
+		
     TrackerTimePos =
         function(value, Timers)
     		for e=TRACKER_START, TRACKER_END do

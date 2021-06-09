@@ -360,29 +360,28 @@ function TotemTimers.ShieldEvent(self, event, unit)
 	end
 	elseif unit=="player" then
 		self.count:SetText("")
-		local name, texture, count, duration, endtime
         local hasBuff = false
-        for i=1,40 do
-            name,texture,count,_,duration,endtime = UnitBuff("player", i)
-            if name == shieldtable[1] or name == shieldtable[2] then
+		local buffs = TotemTimers.UnitBuffs(unit)
+		for j, buff in pairs(buffs) do	
+            if buff.name == shieldtable[1] or buff.name == shieldtable[2] then
                 hasBuff = true
-                local timeleft = endtime - GetTime()
-                if name ~= self.shield or timeleft > self.timer.timers[1] then
-                    self.icons[1]:SetTexture(texture)
+                local timeleft = buff.expTime - GetTime()
+                if buff.name ~= self.shield or timeleft > self.timer.timers[1] then
+                    self.icons[1]:SetTexture(buff.texture)
                     self.timer.expirationMsgs[1] = "Shield"
                     self.timer.earlyExpirationMsgs[1] = "Shield"
-                    self.timer.warningIcons[1] = texture
-                    self.timer.warningSpells[1] = name
-                    self.shield = name
+                    self.timer.warningIcons[1] = buff.texture
+                    self.timer.warningSpells[1] = buff.name
+                    self.shield = buff.name
                     if not ShieldChargesOnly then
-                        self.timer:Start(1, timeleft, duration)
+                        self.timer:Start(1, timeleft, buff.duration)
                     else
-                        self.timer:Start(1, count, 3)
+                        self.timer:Start(1, buff.count, 3)
                     end
                 end
                 if not ShieldChargesOnly then
-                    if count and count > 0 then
-                        self.count:SetText(count)
+                    if buff.count and buff.count > 0 then
+                        self.count:SetText(buff.count)
                     else
                         self.count:SetText("")
                     end
@@ -664,23 +663,23 @@ local function checkESBuff(self)
     if UnitGUID("target") == earthShieldTargetGUID then
         unit = "target"
     elseif UnitGUID("focus") == earthShieldTargetGUID then
-        unit = focus
+        unit = "focus"
+    elseif UnitGUID("mousover") == earthShieldTargetGUID then
+		unit = "mouseover"
     end
 
     local hasBuff = false
-
-    for i = 1, 40 do
-        local name, _, count, _, duration, endtime, source = UnitBuff(unit, i)
-
-        if name == EarthShieldSpellName and source == "player" then
+	local buffs = TotemTimers.UnitBuffs(unit)
+    for j, buff in pairs(buffs) do	
+        if buff.name == EarthShieldSpellName and buff.caster == "player" then
             hasBuff = true
-            local timeleft = endtime - GetTime()
+            local timeleft = buff.expTime - GetTime()
             if not ESChargesOnly then
-                self.count:SetText(count)
+                self.count:SetText(buff.count)
             end
             if timeleft - self.timer.timers[1] > 0.1 then
                 if not ESChargesOnly then
-                    self.timer:Start(1, timeleft, duration)
+                    self.timer:Start(1, timeleft, buff.duration)
                 else
                     self.timer:Start(1, count, 9)
                 end

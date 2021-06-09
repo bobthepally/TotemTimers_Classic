@@ -20,10 +20,28 @@ local NameToSpellID = TotemTimers.NameToSpellID
 local NameToSpellIDL = TotemTimers.NameToSpellIDL
 local SpellIDs = TotemTimers.SpellIDs
 local AvailableSpells = TotemTimers.AvailableSpells
+local SpellTextures = TotemTimers.SpellTextures
 
+local Cooldowns = {
+    [EARTH_TOTEM_SLOT] = {
+        SpellIDs.EarthBind,
+        SpellIDs.Stoneclaw,
+        SpellIDs.EarthElemental,
+    },
+    [WATER_TOTEM_SLOT] = {
+        SpellIDs.ManaTide,
+    },
+    [FIRE_TOTEM_SLOT] = {
+        SpellIDs.FireNova,
+        SpellIDs.FireElemental,
+    },
+    [AIR_TOTEM_SLOT] = {
+        SpellIDs.Grounding,
+    },
+}
 function TotemTimers.CreateTimers()
 	for e = 1,4 do
-		local tt = XiTimers:new(TimerCount[e])
+		local tt = XiTimers:new(#Cooldowns[e] + 1)
 
         tt.manaCheckMini = true
 		tt.button:SetScript("OnEvent", TotemTimers.TotemEvent)
@@ -111,7 +129,16 @@ function TotemTimers.CreateTimers()
         tt.timeElapsed = 0
         tt.Update = function(self, elapsed)
             XiTimers.Update(self, elapsed)
-			if  not IsInGroup() or not TotemTimers.ActiveProfile.CheckRaidRange then return end
+			local profile = TotemTimers.ActiveProfile
+			local wemtp = TotemTimers.WEMapToProvider
+			local amtp = TotemTimers.AuraMapToProvider
+			if ((not IsInGroup() or not profile.CheckRaidRange) and profile.PartyBuffStyle == "NUMBER") then return end
+			if  TotemData[self.activeTotem].noRangeCheck then
+				self.button.player:Hide();
+				self.button.rangeCount:SetText("");
+				return
+			end
+			
             tt.timeElapsed = tt.timeElapsed + elapsed
 			if (tt.timeElapsed > 0.2) then
 				tt.timeElapsed = 0
@@ -129,9 +156,9 @@ function TotemTimers.CreateTimers()
 						local pty = TotemTimers.party
 						wf = true
 						for t = 1,4 do
-							if pty[t] and pty[t].tID and TotemTimers.WEMapToProvider[pty[t].tID] ==  self.activeTotem and pty[t].tExpire > 1000 then
+							if pty[t] and pty[t].tID and wemtp[pty[t].tID] ==  self.activeTotem and pty[t].tExpire > 1000 then
 								count = count + 1
-								if TotemTimers.ActiveProfile.PartyBuffStyle ~= "NUMBER" then
+								if profile.PartyBuffStyle ~= "NUMBER" then
 								   self.button.party[t]:Show()
 								end
 							end
@@ -140,25 +167,26 @@ function TotemTimers.CreateTimers()
 				local units = { "player", "party1", "party2", "party3", "party4" }
 				for i, unit in pairs(units) do
 					local buffs = TotemTimers.UnitBuffs(unit)
-							if i == 1 and TotemTimers.ActiveProfile.PartyBuffStyle ~= "NUMBER" then
+							if i == 1 and profile.PartyBuffStyle ~= "NUMBER" then
 								self.button.player:Show()
 							end
 							for j, buff in pairs(buffs) do			
-						if TotemTimers.AuraMapToProvider[buff.spellId] and 
-							   (string.match(select(1,GetSpellInfo(self.activeTotem)), select(1,GetSpellInfo(TotemTimers.AuraMapToProvider[buff.spellId])))) then
+								if amtp[buff.spellId] and 
+									amtp[buff.spellId] == self.activeTotem then
 							count = count + 1
-									if TotemTimers.ActiveProfile.PartyBuffStyle ~= "NUMBER" then
+									if profile.PartyBuffStyle ~= "NUMBER" then
 										if i > 1 then 
 											self.button.party[i-1]:Show() 
 										else
 											self.button.player:Hide()
 										end
 									end
+									break
 						end
 					end
 				end
 					end
-					if count > 0 and TotemTimers.ActiveProfile.PartyBuffStyle ~= "ICON" then
+					if count > 0 and profile.PartyBuffStyle ~= "ICON" then
                     self.button.rangeCount:SetText(count)
 						if count == GetNumGroupMembers() or (wf and count == GetNumGroupMembers() -1 ) then
 						self.button.rangeCount:SetTextColor(1,1,1,1)
@@ -192,25 +220,6 @@ function TotemTimers.CreateTimers()
 	)
 	TotemTimers.CreateCastButtons()
 end
-
-
-local Cooldowns = {
-    [EARTH_TOTEM_SLOT] = {
-        [2] = SpellIDs.EarthBind,
-        [3] = SpellIDs.Stoneclaw,
-	[4] = SpellIDs.EarthElemental,
-    },
-    [WATER_TOTEM_SLOT] = {
-        [2] = SpellIDs.ManaTide,
-    },
-    [FIRE_TOTEM_SLOT] = {
-        [2] = SpellIDs.FireNova,
-	[3] = SpellIDs.FireElemental,
-    },
-    [AIR_TOTEM_SLOT] = {
-	[2] = SpellIDs.Grounding,
-    },
-}
 
 local TotemicCall = TotemTimers.SpellIDs.TotemicCall
 
@@ -262,7 +271,8 @@ function TotemTimers:TotemEvent(event, arg1, arg2, arg3)
         end
         if settings.ShowCooldowns then
             for nr, spell in pairs(Cooldowns[self.timer.nr]) do
-                if TotemTimers.AvailableSpells[spell] then
+				nr = nr + 1
+                if AvailableSpells[spell] then
                     local start, duration, enable = GetSpellCooldown(spell)
 					if not start and not duration then
 						self.timer:stop(nr)
@@ -272,7 +282,7 @@ function TotemTimers:TotemEvent(event, arg1, arg2, arg3)
                         self.timer:Stop(nr)
                     elseif duration > 2 then --and self.timer.timers[nr]<=0 then  -- update running cooldown timers for Ele T12-2pc
                         self.timer:Start(nr,start+duration-floor(GetTime()),duration)
-                        self.timer.timerBars[nr].icon:SetTexture(TotemTimers.SpellTextures[spell])
+                        self.timer.timerBars[nr].icon:SetTexture(SpellTextures[spell])
                     end
                 elseif self.timer.timers[nr] and self.timer.timers[nr] > 0 then
                     self.timer:Stop(nr)
@@ -451,7 +461,7 @@ function TotemTimers.SetCastButtonSpells()
         local timer = XiTimers.timers[i]
         wipe(SpellArray)
         for k,v in pairs(Profile.TotemOrder[timer.nr]) do
-            if TotemTimers.AvailableSpells[v] and not Profile.HiddenTotems[v] then
+            if AvailableSpells[v] and not Profile.HiddenTotems[v] then
                 table.insert(SpellArray, v)
             end
         end

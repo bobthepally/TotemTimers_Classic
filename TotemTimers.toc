@@ -1,7 +1,7 @@
 ## Interface: 20501
 ## Title: TotemTimers
 ## Author:  Xianghar, updated for TBC by LaYt
-## Version: 1.23.lt
+## Version: 1.25.lt
 ## SavedVariables: TotemTimers_GlobalSettings, TotemTimers_Profiles
 ## OptionalDeps: Masque
 ## LoadManagers: AddonLoader

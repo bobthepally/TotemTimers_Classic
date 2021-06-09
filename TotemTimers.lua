@@ -435,7 +435,7 @@ end
 function TotemTimers.UnitBuffs(unit)
     local buffs = {}
     for i=1, 40 do
-        local name, _, _, _, _, duration, expTime, caster, _, spellId = UnitBuff(unit, i)
+        local name, texture, count, _, duration, expTime, caster, _, _, spellId = UnitBuff(unit, i)
         if (name) then
             table.insert(buffs, { 
 				["name"] = name,
@@ -443,6 +443,8 @@ function TotemTimers.UnitBuffs(unit)
                 ["expTime"] = expTime,
                 ["caster"] = caster,
                 ["spellId"] = spellId,
+				["count"] = count,
+				["texture"] = texture,
             })
         end
     end
