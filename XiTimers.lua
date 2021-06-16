@@ -83,6 +83,7 @@ function XiTimers:new(nroftimers, unclickable)
 	self.running = 0
 	self.timersRunning = {}
     self.unclickable = unclickable
+	self.TransparentAlpha = 0.4
 	
 	if unclickable then
         self.button = CreateFrame("CheckButton", "XiTimers_Timer"..XiTimers.nrOfTimers, UIParent, "XiTimersUnsecureTemplate")
@@ -121,7 +122,6 @@ function XiTimers:new(nroftimers, unclickable)
 	self.button.unclickable = unclickable
 	self.button.element = XiTimers.nrOfTimers
     
-	
 	self.nrOfTimers = nroftimers
 	self.timers = {}
     self.durations = {}
@@ -157,14 +157,15 @@ function XiTimers:new(nroftimers, unclickable)
             flash.animation = self.button.flash[i]:CreateAnimationGroup()
             flash.animation:SetLooping("NONE")
             flash.flashAnim = flash.animation:CreateAnimation()
+			flash.flashAnim.timer = self
             flash.flashAnim:SetDuration(15)
             flash.flashAnim.flash = flash
             flash.flashAnim:SetScript("OnPlay", function(self) self.flash:Show() end)
             flash.flashAnim:SetScript("OnUpdate", function(self) self.flash:SetAlpha(BuffFrame.BuffAlphaValue) end)
-			flash.flashAnim:SetScript("OnStop", function(self) self.flash:SetAlpha(inActiveAlpha) end)
-			flash.flashAnim:SetScript("OnFinished", function(self) self.flash:SetAlpha(inActiveAlpha) end)
+			flash.flashAnim:SetScript("OnStop", function(self) self.flash:SetAlpha(self.timer.TransparentAlpha) end)
+			flash.flashAnim:SetScript("OnFinished", function(self) self.flash:SetAlpha(self.timer.TransparentAlpha) end)
         end
-		self:SetIconAlpha(self.button.icons[i], 0.4)
+		self:SetIconAlpha(self.button.icons[i], self.TransparentAlpha)
 	end
     
     
@@ -342,33 +343,19 @@ function XiTimers:Start(timer, time, duration)
 	FormatTime(timerbar.time, time, self.timeStyle)
     FormatTime(self.button.time, time, self.timeStyle)
 	timerbar:SetMinMaxValues(0, duration)
+
+    if timer > 1 then
     if (timer > 1 and (not self.nobars or (self.nobars and not self.timerOnButton))) then
         self:ShowTimerBar(timer)
     else
         self:HideTimerBar(timer)
     end        
         
-	if self.visibleTimerBars and (timer>1 or not self.timerOnButton) then
+        if self.visibleTimerBars and timer>1 then
 		timerbar:SetValue(time)
 	end
-	if not self.dontAlpha then self:SetIconAlpha(self.button.icons[timer], self.maxAlpha) end
-    if self.reverseAlpha then self:SetIconAlpha(self.button.icons[timer], 0.4) end
-    if timer == 1 then
-		self.button.time:Hide()
-		if not self.hideTime then
-			if not self.timerOnButton or self.forceBar then
-				self.button.time:Hide()
-				self:ShowTimerBar(timer)
 			else 
-				self:HideTimerBar(timer)
-				self.button.time:Show()
-				SetButtonTime(self.button.time, self.timers[1])
-				self.button.time:SetTextColor(self.timeColor.r,self.timeColor.g,self.timeColor.b)
-			end
-		else
-			self.button.time:Hide()
-			self:HideTimerBar(timer)
-		end
+        self:ShowTimer()
         if (self.showCooldown or self.timerOnButton) and not self.prohibitCooldown then
             CooldownFrame_Set(self.button.cooldown, GetTime()-duration+time, duration, 1)
         else
@@ -381,6 +368,10 @@ function XiTimers:Start(timer, time, duration)
             self.button.bar:Hide()
         end
     end
+
+    if not self.dontAlpha then self:SetIconAlpha(self.button.icons[timer], self.maxAlpha) end
+    if self.reverseAlpha then self:SetIconAlpha(self.button.icons[timer], self.TransparentAlpha) end
+
     self.isAnimating = false
     self.flashRed = TotemTimers.ActiveProfile.flashRed
     --self.button.bar:SetValue(0)
@@ -413,10 +404,12 @@ function XiTimers:Stop(timer)
     end
     self.stopQuiet = false
 	timerbar.time:SetText("")
+--[[ LaYt
 	for i = 1,4 do if self.button.party then  self.button.party[i]:Hide() end end
         if self.button.player then self.button.player:Hide() end
 
 	self.button.rangeCount:SetText("")
+-- /LaYt]]
 	if self.visibleTimerBars then		
 		timerbar:SetValue(0)
 	end
@@ -425,7 +418,7 @@ function XiTimers:Stop(timer)
         self.button.time:Hide()
         self.button.cooldown:Hide()
     end 
-    if not self.dontAlpha then self:SetIconAlpha(self.button.icons[timer], 0.4) end
+    if not self.dontAlpha then self:SetIconAlpha(self.button.icons[timer], self.TransparentAlpha) end
     if self.reverseAlpha then self:SetIconAlpha(self.button.icons[timer],self.maxAlpha) end
     self.button.bar:Hide()
     self:SetTimerBarPos(self.timerBarPos, true)
@@ -434,6 +427,24 @@ function XiTimers:Stop(timer)
     end
     -- self:SetOutOfRange(false)
 	self.timers[timer] = 0
+end
+
+function XiTimers:ShowTimer()
+    self.button.time:Hide()
+    if not self.hideTime then
+        if not self.timerOnButton or self.forceBar then
+            self.button.time:Hide()
+            self:ShowTimerBar(1)
+            self.timerBars[1]:SetValue(self.timers[1])
+        else
+            self:HideTimerBar(1)
+            self.button.time:Show()
+            SetButtonTime(self.button.time, self.timers[1], nil)
+        end
+    else
+        self.button.time:Hide()
+        self:HideTimerBar(1)
+    end
 end
 
 

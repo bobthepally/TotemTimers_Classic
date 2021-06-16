@@ -16,7 +16,7 @@
 if select(2,UnitClass("player")) ~= "SHAMAN" then return end
 
 TotemTimers.timers = XiTimers
-TotemTimers.party = {}
+TotemTimers.party = {}  --LaYt
 
 local warnings = nil
 
@@ -82,9 +82,11 @@ local function TotemTimers_OnEvent(self, event, ...)
     elseif event == "UPDATE_BINDINGS" then
         ClearOverrideBindings(TotemTimersFrame)
         TotemTimers.InitializeBindings()
-	elseif event == "CHAT_MSG_ADDON" then
+	elseif event == "CHAT_MSG_ADDON" then --LaYt
 		local pfx = select(1, ...)
 		if pfx == "WF_STATUS" then TotemTimers.onWF_STATUS(...) end
+	elseif event == "GROUP_ROSTER_UPDATE" then
+		TotemTimers.UpdateParty()
 	end
 
 end
@@ -98,6 +100,7 @@ function TotemTimers.SetupGlobals()
 	end
 	if select(2,UnitClass("player")) == "SHAMAN" then
 		TotemTimers.GetSpells()
+        TotemTimers.GetTalents()
 		TotemTimers.UpdateProfiles()
         TotemTimers.SelectActiveProfile()
         
@@ -142,7 +145,7 @@ function TotemTimers.SetupGlobals()
         TotemTimersFrame:RegisterEvent("PLAYER_LEAVING_WORLD")
         TotemTimersFrame:RegisterEvent("UPDATE_BINDINGS")
         -- TotemTimersFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-		TotemTimersFrame:RegisterEvent("CHAT_MSG_ADDON")
+--		TotemTimersFrame:RegisterEvent("CHAT_MSG_ADDON") --LaYt
 
         --TotemTimers_UpdateRaid()
 		TotemTimers.InitMasque()
@@ -184,9 +187,15 @@ function TotemTimers_Slash(msg)
     else
         InterfaceOptionsFrame_OpenToCategory(TotemTimers_LastGUIPane.name)
     end]]
-    if TotemTimers.LastGUIPanel then
-        InterfaceOptionsFrame_OpenToCategory(TotemTimers.LastGUIPanel)
+
+    local lastGUIPanel = TotemTimers.LastGUIPanel
+
+    InterfaceOptionsFrame_OpenToCategory("TotemTimers")
+
+    if lastGUIPanel then
+        InterfaceOptionsFrame_OpenToCategory(lastGUIPanel)
     else
+        InterfaceOptionsFrame_OpenToCategory(TotemTimers.TimersGUIPanel)
         InterfaceOptionsFrame_OpenToCategory("TotemTimers")
     end
 end
@@ -391,7 +400,7 @@ function TotemTimers.UpdateMacro()
         sequence = strsub(sequence, 1, strlen(sequence)-2)
         local nr = GetMacroIndexByName("TT Cast")
         if nr == 0 then
-            CreateMacro("TT Cast", "INV_MISC_QUESTIONMARK", sequence, 1)
+				CreateMacro("TT Cast", "INV_MISC_QUESTIONMARK", sequence, true)
         else
             EditMacro(nr, "TT Cast", nil, sequence)
         end

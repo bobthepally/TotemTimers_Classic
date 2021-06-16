@@ -21,6 +21,7 @@ local function SetOrder(nr, value)
 	TotemTimers.ActiveProfile.Order[fromnr] = TotemTimers.ActiveProfile.Order[nr]
 	TotemTimers.ActiveProfile.Order[nr] = value
 	TotemTimers.ProcessSetting("Order")
+    TotemTimers.UpdateMacro()
 end
 
 TotemTimers.options.args.timers = {
@@ -151,7 +152,7 @@ TotemTimers.options.args.timers = {
             name = L["Scaling"],
         },
         timerSize = {
-            order = 11,
+            order = 13,
             type = "range",
             name = L["Button Size"],
             desc = L["Scales the timer buttons"],
@@ -164,8 +165,26 @@ TotemTimers.options.args.timers = {
                   end,
             get = function(info) return TotemTimers.ActiveProfile.TimerSize end,
         },
+		
+		InActiveOpacity = {
+			order = 16,
+			type = "range",
+			name = L["Inactive Button Opacity"],
+			desc = L["Opacity of inactive button"],
+			min = 0,
+			max = 1,
+			step = 0.01,
+			set = function(info, val)
+						TotemTimers.ActiveProfile.InActiveOpacity = val  TotemTimers.ProcessSetting("InActiveOpacity")
+				  end,
+			get = function(info) return TotemTimers.ActiveProfile.InActiveOpacity end,
+		},
+		
+		
+		
+		
         timerTimeHeight = {
-            order = 12,
+            order = 19,
             type = "range",
             name = L["Time Size"],
             desc = L["Sets the font size of time strings"],
@@ -178,7 +197,7 @@ TotemTimers.options.args.timers = {
             get = function(info) return TotemTimers.ActiveProfile.TimerTimeHeight end,
         },
         spacing = {
-            order = 13,
+            order = 21,
             type = "range",
             name = L["Spacing"] ,
             desc = L["Sets the space between timer buttons"],
@@ -191,7 +210,7 @@ TotemTimers.options.args.timers = {
             get = function(info) return TotemTimers.ActiveProfile.TimerSpacing end,
         },
         timeSpacing = {
-            order = 14,
+            order = 24,
             type = "range",
             name = L["Time Spacing"],
             desc = L["Sets the space between timer buttons and timer bars"],
@@ -204,7 +223,7 @@ TotemTimers.options.args.timers = {
             get = function(info) return TotemTimers.ActiveProfile.TimerTimeSpacing end,
         },
         timerBarWidth = {
-            order = 15,
+            order = 27,
             type = "range",
             name = L["Timer Bar Width"],
             desc = L["Timer Bar Width Desc"],
@@ -217,7 +236,7 @@ TotemTimers.options.args.timers = {
             get = function(info) return TotemTimers.ActiveProfile.TotemTimerBarWidth end,
         },
         TotemMenuSpacing = {
-            order = 16,
+            order = 29,
             type = "range",
             name = L["Totem Menu Spacing"],
             desc = L["Totem Menu Spacing Desc"],
@@ -230,7 +249,7 @@ TotemTimers.options.args.timers = {
                   end,
             get = function(info) return TotemTimers.ActiveProfile.TotemMenuSpacing end,
         },
-		PartyBuffStyle = {
+--[[		PartyBuffStyle = {
 			order = 17,
             type = "select",
             name = L["Buff affected style"],
@@ -294,6 +313,7 @@ TotemTimers.options.args.timers = {
                   end,
             get = function(info) return TotemTimers.ActiveProfile.AffectedPositionY end,
         },
+]]
         advanced = {
             order = 30,
             type = "header",
@@ -316,6 +336,7 @@ TotemTimers.options.args.timers = {
                       TotemTimers.ActiveProfile.MenusAlwaysVisible = val
                       TotemTimers.ProcessSetting("OpenOnRightclick")
                       TotemTimers.ProcessSetting("MenusAlwaysVisible")
+                      TotemTimers.ProcessSetting("BarBindings")
                   end,
             get = function(info) return TotemTimers.ActiveProfile.MenusAlwaysVisible end,
         },            
@@ -367,7 +388,7 @@ TotemTimers.options.args.timers = {
             set = function(info, val) TotemTimers.ActiveProfile.ShowCooldowns = val  TotemTimers.ProcessSetting("ShowCooldowns") end,
             get = function(info) return TotemTimers.ActiveProfile.ShowCooldowns end,                          
         },                                               
- --[[       PlayerRange = {
+       PlayerRange = {
             order = 39,
             type = "toggle",
             name = L["Player Range"],
@@ -375,8 +396,26 @@ TotemTimers.options.args.timers = {
             set = function(info, val) TotemTimers.ActiveProfile.CheckPlayerRange = val  TotemTimers.ProcessSetting("CheckPlayerRange") end,
             get = function(info) return TotemTimers.ActiveProfile.CheckPlayerRange end,                          
         },                                               
-	]]
-        RaidRange = {
+        PartyRange = {
+            order = 40,
+            type = "toggle",
+            name = L["Party Range"],
+            desc = L["Party Range Desc"],
+            set = function(info, val) TotemTimers.ActiveProfile.CheckRaidRange = val  TotemTimers.ProcessSetting("CheckRaidRange") end,
+            get = function(info) return TotemTimers.ActiveProfile.CheckRaidRange end,
+        },
+        PartyRangePosition = {
+            order = 41,
+            type = "select",
+            name = L["Party Range Position"],
+            desc = L["Party Range Position Desc"],
+            values = {	["LEFT"] = L["Left"], ["RIGHT"] = L["Right"], ["TOP"] = L["Top"], ["BOTTOM"] = L["Bottom"],},
+            set = function(info, val)
+                TotemTimers.ActiveProfile.PartyRangePosition = val  TotemTimers.ProcessSetting("PartyRangePosition")
+            end,
+            get = function(info) return TotemTimers.ActiveProfile.PartyRangePosition end,
+        },
+ --[[       RaidRange = {
             order = 40,
             type = "toggle",
             name = L["Raid Member Range"],
@@ -384,15 +423,14 @@ TotemTimers.options.args.timers = {
             set = function(info, val) TotemTimers.ActiveProfile.CheckRaidRange = val  TotemTimers.ProcessSetting("CheckRaidRange") end,
             get = function(info) return TotemTimers.ActiveProfile.CheckRaidRange end,                          
         },                                               
-    --[[    RaidRangeTooltip = {
+        RaidRangeTooltip = {
             order = 41,
             type = "toggle",
             name = L["Raid Range Tooltip"],
             desc = L["RR Tooltip Desc"],
             set = function(info, val) TotemTimers.ActiveProfile.ShowRaidRangeTooltip = val  TotemTimers.ProcessSetting("ShowRaidRangeTooltip") end,
             get = function(info) return TotemTimers.ActiveProfile.ShowRaidRangeTooltip end,                          
-        }, 
-	]]
+        }, ]]
 macro = {
              order = 50,
              type = "header",
@@ -433,3 +471,4 @@ local frame = ACD:AddToBlizOptions("TotemTimers", L["Timers"], "TotemTimers", "t
 frame:SetScript("OnEvent", function(self) InterfaceOptionsFrame:Hide() end)
 frame:HookScript("OnShow", function(self) if InCombatLockdown() then InterfaceOptionsFrame:Hide() end TotemTimers.LastGUIPanel = self end)
 frame:RegisterEvent("PLAYER_REGEN_DISABLED")
+TotemTimers.TimersGUIPanel = frame

@@ -26,6 +26,13 @@ local TotemColors = {
 
 local SettingsFunctions
 
+local PartyRangePositions = {
+    ["TOP"] = {"BOTTOMLEFT", "TOPLEFT", "LEFT", "RIGHT",1,0},
+    ["LEFT"] = {"TOPRIGHT", "TOPLEFT", "TOP", "BOTTOM",0,-1},
+    ["BOTTOM"] = {"TOPLEFT", "BOTTOMLEFT", "LEFT", "RIGHT",1,0},
+    ["RIGHT"] = {"TOPLEFT", "TOPRIGHT", "TOP", "BOTTOM",0,-1}
+}
+
 function TotemTimers.ProcessSetting(setting)
     if SettingsFunctions[setting] then
         SettingsFunctions[setting](TotemTimers.ActiveProfile[setting], XiTimers.timers)
@@ -260,6 +267,7 @@ SettingsFunctions = {
     ShieldLeftButton =
         function(value, Timers)
     		Timers[6].button:SetAttribute("*spell1",value)
+        Timers[6].manaCheck = value
         end,
         
     ShieldRightButton =
@@ -576,7 +584,7 @@ SettingsFunctions = {
                 if i ~= 21 then
                     Timers[i].timerOnButton = value
                     if not value and i > 8 and TotemTimers.ActiveProfile.CDTimersOnButtons then Timers[i].timerOnButton = true end
-                    if Timers[i].timers[1] > 0 then Timers[i]:Start(1, Timers[i].timers[1], Timers[i].durations[1]) end
+                if Timers[i].timers[1] > 0 then Timers[i]:ShowTimer() end
                     if Timers[i].nrOfTimers > 1 and Timers[i].timers[2] > 0 then Timers[i]:Start(2, Timers[i].timers[2], Timers[i].durations[1]) end
                 end
             end
@@ -593,6 +601,79 @@ SettingsFunctions = {
                 end
             end
         end,
+        
+    CheckPlayerRange = function(value, Timers)
+        local checkRaid = TotemTimers.ActiveProfile.CheckRaidRange
+        if value then
+            for i = 1,4 do
+                if Timers[i].active then
+                    Timers[i].button:RegisterEvent("UNIT_AURA")
+                    if Timers[i].timers[1] > 0 then
+                        TotemTimers.TotemEvent(Timers[i].button, "UNIT_AURA", "player")
+                    end
+                end
+            end
+        else
+            for i = 1,4 do
+                if not checkRaid then Timer[i].button:UnregisterEvent("UNIT_AURA") end
+                Timers[i].button.playerRange:Hide()
+            end
+        end
+    end,
+
+    CheckRaidRange = function(value, Timers)
+        local checkPlayer = TotemTimers.ActiveProfile.CheckPlayerRange
+        if value then
+            C_ChatInfo.RegisterAddonMessagePrefix("WF_STATUS")
+			TotemTimersFrame:RegisterEvent("CHAT_MSG_ADDON")
+			TotemTimersFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+            for i = 1,4 do
+                local timer = Timers[i]
+                if Timers[i].active then
+                    Timers[i].button:RegisterEvent("UNIT_AURA")
+                    
+                    
+                        
+                    
+                    if Timers[i].timers[1] > 0 then
+                        for j = 1,4 do
+                            TotemTimers.TotemEvent(Timers[i].button, "UNIT_AURA", "party"..j)
+                        end
+                    end
+                end
+            end
+            TotemTimers.UpdateParty()
+        else
+			TotemTimersFrame:UnregisterEvent("CHAT_MSG_ADDON")
+			TotemTimersFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+            for i = 1,4 do
+                if not checkPlayer then Timers[i].button:UnregisterEvent("UNIT_AURA") end
+                for j = 1,4 do Timers[i].button.partyRange[j]:Hide() end
+            end
+        end
+    end,
+
+    PartyRangePosition = function(value, Timers)
+        if not PartyRangePositions[value] then return end
+        for i = 1,4 do
+            local button = Timers[i].button
+            button.partyRange[1]:ClearAllPoints();
+            button.partyRange[1]:SetPoint(PartyRangePositions[value][1],
+                    button,
+                    PartyRangePositions[value][2],
+                    PartyRangePositions[value][5],
+                    PartyRangePositions[value][6]);
+            for j = 2,4 do
+                button.partyRange[j]:ClearAllPoints();
+                button.partyRange[j]:SetPoint(PartyRangePositions[value][3],
+                        button.partyRange[j-1],
+                        PartyRangePositions[value][4],
+                        PartyRangePositions[value][5],
+                        PartyRangePositions[value][6]);
+            end
+        end
+    end,
+
         
    
     --[[ HideInVehicle =
@@ -724,7 +805,15 @@ SettingsFunctions = {
 				v:SetSpacing(value)
 			end
         end, --]]
-
+	InActiveOpacity =
+		function(value, Timers)
+            for i=1,4 do
+                Timers[i].TransparentAlpha = value
+				for j=1, Timers[i].nrOfTimers do
+					Timers[i]:SetIconAlpha(Timers[i].button.icons[j], value)
+				end
+            end
+        end,
 	CooldownAlpha =
         function(value, Timers)
             for i=1,#Timers do
@@ -759,10 +848,11 @@ SettingsFunctions = {
                 Timers[i].button.rangeCount:SetPoint(point, relativeTo, relativePoint, xOfs, value)
         end
         end,
-    PartyBuffSide = 
+--[[    PartyBuffSide = 
 		function(value, Timers)
 			TotemTimers.ReorerPartyBuffs()	
 		end
+ ]]       
 }
 
 SettingsFunctions.ReverseBarBindings = SettingsFunctions.BarBindings

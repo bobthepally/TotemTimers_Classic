@@ -112,13 +112,15 @@ TotemTimers.SpellIDs = {
 	
 }
 
+local SpellIDs = TotemTimers.SpellIDs
+
 TotemTimers.SpellTextures = {}
 TotemTimers.SpellNames = {}
 TotemTimers.NameToSpellID = {}
 TotemTimers.TextureToSpellID = {}
 TotemTimers.NameToSpellIDL = {}
 
-for k,v in pairs(TotemTimers.SpellIDs) do
+for k,v in pairs(SpellIDs) do
     local n,_,t = GetSpellInfo(v)
     TotemTimers.SpellTextures[v] = t
     TotemTimers.SpellNames[v] = n
@@ -131,6 +133,8 @@ for k,v in pairs(TotemTimers.SpellIDs) do
     end
 end
 
+
+
 --[[
 1 - Melee
 2 - Ranged
@@ -141,134 +145,138 @@ end
 
 
 TotemData = {
-	[TotemTimers.SpellIDs.Tremor] = {
+	[SpellIDs.Tremor] = {
         element = EARTH_TOTEM_SLOT,
         noRangeCheck = true,
         flashInterval = 3,
         warningPoint = 2,
+        rangeCheck = 30,
     },
-    [TotemTimers.SpellIDs.Stoneskin] = {
+    [SpellIDs.Stoneskin] = {
         element = EARTH_TOTEM_SLOT,
         noRangeCheck = false,
     },
-    [TotemTimers.SpellIDs.Stoneclaw] = {
+    [SpellIDs.Stoneclaw] = {
         element = EARTH_TOTEM_SLOT,
         noRangeCheck = true,
-        warningPoint = 2,
+ --       warningPoint = 2,
     },
-    [TotemTimers.SpellIDs.StrengthOfEarth] = {
+    [SpellIDs.StrengthOfEarth] = {
         element = EARTH_TOTEM_SLOT,
          noRangeCheck = false,
     },
-    [TotemTimers.SpellIDs.EarthBind] = {
+    [SpellIDs.EarthBind] = {
         element = EARTH_TOTEM_SLOT,
         noRangeCheck = true,
         flashInterval = 3,
         flashDelay = 1,
         warningPoint = 5,
     },
-    [TotemTimers.SpellIDs.EarthElemental] = {
+    [SpellIDs.EarthElemental] = {
         element = EARTH_TOTEM_SLOT,
         noRangeCheck = true,
 	},
-	[TotemTimers.SpellIDs.Searing] = {
+	[SpellIDs.Searing] = {
            element = FIRE_TOTEM_SLOT,
         noRangeCheck = true,
         warningPoint = 5,
 	},
-    [TotemTimers.SpellIDs.FireNova] = {
+    [SpellIDs.FireNova] = {
         element = FIRE_TOTEM_SLOT,
         noRangeCheck = true,
     },
-	[TotemTimers.SpellIDs.Magma] = {
+	[SpellIDs.Magma] = {
 		element = FIRE_TOTEM_SLOT,
         noRangeCheck = true,
 	},
-    [TotemTimers.SpellIDs.FrostResistance] = {
+    [SpellIDs.FrostResistance] = {
         element = FIRE_TOTEM_SLOT,
          noRangeCheck = false,
     },
-    [TotemTimers.SpellIDs.Flametongue] = {
+    [SpellIDs.Flametongue] = {
         element = FIRE_TOTEM_SLOT,
          noRangeCheck = false,
     },
-    [TotemTimers.SpellIDs.FireElemental] = {
+    [SpellIDs.FireElemental] = {
         element = FIRE_TOTEM_SLOT,
         noRangeCheck = true,
     },
-    [TotemTimers.SpellIDs.Wrath] = {
+    [SpellIDs.Wrath] = {
         element = FIRE_TOTEM_SLOT,
          noRangeCheck = false,
     },
-    [TotemTimers.SpellIDs.HealingStream] = {
+    [SpellIDs.HealingStream] = {
 		element = WATER_TOTEM_SLOT,
-        range = 1600,
 		warningPoint = 4, 
 		noRangeCheck = false,
 	},
-    [TotemTimers.SpellIDs.ManaTide] = {
+    [SpellIDs.ManaTide] = {
         element = WATER_TOTEM_SLOT,
         warningPoint = 2,
 		noRangeCheck = false,
+        rangeCheck = 20,
     },
-    [TotemTimers.SpellIDs.PoisonCleansing] = {
+    [SpellIDs.PoisonCleansing] = {
         element = WATER_TOTEM_SLOT,
         noRangeCheck = true,
         flashInterval = 5,
+        rangeCheck = 20,
     },
-    [TotemTimers.SpellIDs.DiseaseCleansing] = {
+    [SpellIDs.DiseaseCleansing] = {
         element = WATER_TOTEM_SLOT,
         noRangeCheck = true,
         flashInterval = 5,
+        rangeCheck = 20,
     },
-    [TotemTimers.SpellIDs.ManaSpring] = {
+    [SpellIDs.ManaSpring] = {
         element = WATER_TOTEM_SLOT,
          noRangeCheck = false,
     },
-    [TotemTimers.SpellIDs.FireResistance] = {
+    [SpellIDs.FireResistance] = {
         element = WATER_TOTEM_SLOT,
         noRangeCheck = false,
     },
-	[TotemTimers.SpellIDs.Grounding] = {
+	[SpellIDs.Grounding] = {
 		element = AIR_TOTEM_SLOT,
-        partyOnly = true,
-        range = 100,
-		warningPoint = 5,
-		flashInterval = 10,
+--     partyOnly = true,
+--    range = 100,
+--		warningPoint = 5,
+--		flashInterval = 10,
 		noRangeCheck = false,
 	},
-    [TotemTimers.SpellIDs.NatureResistance] = {
+    [SpellIDs.NatureResistance] = {
         element = AIR_TOTEM_SLOT,
         noRangeCheck = false,
     },
-    [TotemTimers.SpellIDs.Windfury] = {
+    [SpellIDs.Windfury] = {
         element = AIR_TOTEM_SLOT,
         noRangeCheck = false,
+		flashInterval = 10,
+		warningPoint = 5,
     },
-    [TotemTimers.SpellIDs.Sentry] = {
+    [SpellIDs.Sentry] = {
         element = AIR_TOTEM_SLOT,
         noRangeCheck = true,
     },
-    [TotemTimers.SpellIDs.Windwall] = {
+    [SpellIDs.Windwall] = {
         element = AIR_TOTEM_SLOT,
         noRangeCheck = false,
     },
-    [TotemTimers.SpellIDs.GraceOfAir] = {
+    [SpellIDs.GraceOfAir] = {
         element = AIR_TOTEM_SLOT,
         noRangeCheck = false,
     },
-    [TotemTimers.SpellIDs.TranquilAir] = {
+    [SpellIDs.TranquilAir] = {
         element = AIR_TOTEM_SLOT,
         noRangeCheck = false,
     },
-    [TotemTimers.SpellIDs.WrathOfAir] = {
+    [SpellIDs.WrathOfAir] = {
         element = AIR_TOTEM_SLOT,
         noRangeCheck = false,
     },
 
 }
 
-local sid = TotemTimers.SpellIDs
 
 local amtp = {
 	[30708] = 30706,
@@ -329,6 +337,11 @@ for k,v in pairs(amtp) do
     TotemTimers.AuraMapToProvider[k] = TotemTimers.NameToSpellID[n]
 end
 
+for k,v in pairs(amtp) do
+    if  TotemData[v] ~= nil then TotemData[v].buffName = GetSpellInfo(k) end
+end
+
+
 TotemTimers.WEMapToProvider = {
  -- Windfury Totem
         [564] = 8512,
@@ -346,43 +359,58 @@ TotemTimers.WEMapToProvider = {
 
 
 TotemTimers.WeaponEnchants = {
-    [3] = sid.FlametongueWeapon,
-    [4] = sid.FlametongueWeapon,
-    [5] = sid.FlametongueWeapon,
-    [523] = sid.FlametongueWeapon,
-    [1665] = sid.FlametongueWeapon,
-    [1666] = sid.FlametongueWeapon,
-    [2634] = sid.FlametongueWeapon,
-    [3779] = sid.FlametongueWeapon,
-    [3780] = sid.FlametongueWeapon,
-    [3781] = sid.FlametongueWeapon,
-    [1] = sid.RockbiterWeapon,
-    [6] = sid.RockbiterWeapon,
-    [29] = sid.RockbiterWeapon,
-    [503] = sid.RockbiterWeapon,
-    [504] = sid.RockbiterWeapon,
-    [683] = sid.RockbiterWeapon,
-    [1663] = sid.RockbiterWeapon,
-    [1664] = sid.RockbiterWeapon,
-    [2632] = sid.RockbiterWeapon,
-    [2633] = sid.RockbiterWeapon,
-    [3018] = sid.RockbiterWeapon,
-    [283] = sid.WindfuryWeapon,
-    [284] = sid.WindfuryWeapon,
-    [525] = sid.WindfuryWeapon,
-    [1669] = sid.WindfuryWeapon,
-    [2636] = sid.WindfuryWeapon,
-    [3785] = sid.WindfuryWeapon,
-    [3786] = sid.WindfuryWeapon,
-    [3787] = sid.WindfuryWeapon,
-    [2] = sid.FrostbrandWeapon,
-    [12] = sid.FrostbrandWeapon,
-    [5244] = sid.FrostbrandWeapon,
-    [1667] = sid.FrostbrandWeapon,
-    [1668] = sid.FrostbrandWeapon,
-    [2635] = sid.FrostbrandWeapon,
-    [3782] = sid.FrostbrandWeapon,
-    [3783] = sid.FrostbrandWeapon,
-    [3784] = sid.FrostbrandWeapon,
+    [3] = SpellIDs.FlametongueWeapon,
+    [4] = SpellIDs.FlametongueWeapon,
+    [5] = SpellIDs.FlametongueWeapon,
+    [523] = SpellIDs.FlametongueWeapon,
+    [1665] = SpellIDs.FlametongueWeapon,
+    [1666] = SpellIDs.FlametongueWeapon,
+    [2634] = SpellIDs.FlametongueWeapon,
+    [3779] = SpellIDs.FlametongueWeapon,
+    [3780] = SpellIDs.FlametongueWeapon,
+    [3781] = SpellIDs.FlametongueWeapon,
+    [1] = SpellIDs.RockbiterWeapon,
+    [6] = SpellIDs.RockbiterWeapon,
+    [29] = SpellIDs.RockbiterWeapon,
+    [503] = SpellIDs.RockbiterWeapon,
+    [504] = SpellIDs.RockbiterWeapon,
+    [683] = SpellIDs.RockbiterWeapon,
+    [1663] = SpellIDs.RockbiterWeapon,
+    [1664] = SpellIDs.RockbiterWeapon,
+    [2632] = SpellIDs.RockbiterWeapon,
+    [2633] = SpellIDs.RockbiterWeapon,
+    [3018] = SpellIDs.RockbiterWeapon,
+    [283] = SpellIDs.WindfuryWeapon,
+    [284] = SpellIDs.WindfuryWeapon,
+    [525] = SpellIDs.WindfuryWeapon,
+    [1669] = SpellIDs.WindfuryWeapon,
+    [2636] = SpellIDs.WindfuryWeapon,
+    [3785] = SpellIDs.WindfuryWeapon,
+    [3786] = SpellIDs.WindfuryWeapon,
+    [3787] = SpellIDs.WindfuryWeapon,
+    [2] = SpellIDs.FrostbrandWeapon,
+    [12] = SpellIDs.FrostbrandWeapon,
+    [5244] = SpellIDs.FrostbrandWeapon,
+    [1667] = SpellIDs.FrostbrandWeapon,
+    [1668] = SpellIDs.FrostbrandWeapon,
+    [2635] = SpellIDs.FrostbrandWeapon,
+    [3782] = SpellIDs.FrostbrandWeapon,
+    [3783] = SpellIDs.FrostbrandWeapon,
+    [3784] = SpellIDs.FrostbrandWeapon,
 }
-for i = 3018, 3044 do TotemTimers.WeaponEnchants[i] = sid.RockbiterWeapon end
+for i = 3018, 3044 do TotemTimers.WeaponEnchants[i] = SpellIDs.RockbiterWeapon end
+
+function TotemTimers.GetMaxRank(spell)
+	local maxspell
+	if type(spell) == "number" then
+		maxspell = select(1,GetSpellInfo(spell))
+	else
+		maxspell = spell
+	end
+	local spellId = select(7, GetSpellInfo(maxspell))
+	local rank = GetSpellSubtext(spellId)
+	if rank then 
+		maxspell = maxspell .. "(" .. rank ..")"
+	end
+	return maxspell
+end

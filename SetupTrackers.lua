@@ -431,7 +431,7 @@ function TotemTimers.OrderTrackers()
 		Timers[e].button:ClearAllPoints()
 	end
     if arrange == "free" then
-        for i = 5, 6 do
+        for i = 5,8 do
             Timers[i].savePos = true
             local pos = TotemTimers.ActiveProfile.TimerPositions[i]            
             if not pos or not pos[1] then
@@ -504,14 +504,6 @@ end
 local mainMsg = ""
 local offMsg = ""
 local GetWeaponEnchantInfo = GetWeaponEnchantInfo
-local Enchanted, CastEnchant, CastTexture
-
-local function SetWeaponEnchantTextureAndMsg(self, enchant, texture, nr)
-    self.icons[nr]:SetTexture(texture)
-    self.timer.warningIcons[nr] = texture
-    self.timer.warningSpells[nr] = enchant
-    self.timer.expirationMsgs[nr] = "Weapon"
-end
 
 function TotemTimers.WeaponUpdate(self, elapsed)
     local enchant, expiration, _, mainID, offenchant, offExpiration, _, offID = GetWeaponEnchantInfo()

@@ -60,6 +60,10 @@ function TotemTimers.timerTooltip(self)
         if spell and spell > 0 then
             TotemTimers.PositionTooltip(self)
             SetTooltipSpellID(spell)
+			local rank = GetSpellSubtext(spell)
+			if rank and rank ~= "" then 
+				GameTooltip:AddLine( "(" .. rank ..")" )
+			end
         end
     end
 end
@@ -71,6 +75,10 @@ function TotemTimers.TotemTooltip(self)
     TotemTimers.PositionTooltip(self)
     if spell and spell > 0 then
         SetTooltipSpellID(spell)
+		local rank = GetSpellSubtext(spell)
+		if rank and rank ~= "" then 
+			GameTooltip:AddLine( "(" .. rank ..")" )
+		end
     end
     GameTooltip:AddLine(" ")
 	local name,_,texture = GetSpellInfo(spell)

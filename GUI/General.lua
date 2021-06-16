@@ -173,7 +173,7 @@ TotemTimers.options = {
                     get = function(info) return TotemTimers.ActiveProfile.TimeStyle end,
                 },
                 TimerBarTexture = {
-                    order = 35,
+                    order = 24,
                     type = "select",
                     name = L["Timer Bar Texture"],
                     values = AceGUIWidgetLSMlists.statusbar,
@@ -182,7 +182,7 @@ TotemTimers.options = {
                     dialogControl = "LSM30_Statusbar",
                 },                
                 TimeFont = {
-                    order = 35,
+                    order = 28,
                     type = "select",
                     name = L["Time Font"] ,
                     values = AceGUIWidgetLSMlists.font,
@@ -207,7 +207,7 @@ TotemTimers.options = {
                           end,
                 },
                 TimerBarColor = {
-                    order = 37,
+                    order = 40,
                     type = "color",
                     name = L["Timer Bar Color"],
                     hasAlpha = true,
@@ -225,7 +225,7 @@ TotemTimers.options = {
                           end,
                 },
 				CooldownAlpha = {
-                    order = 11,
+                    order = 32,
                     type = "range",
                     name = L["Cooldown Opacity"],
                     desc = L["Opacity of the cooldown swirls"],
@@ -260,7 +260,7 @@ local frame = ACD:AddToBlizOptions("TotemTimers", "TotemTimers", nil, "general")
 frame:SetScript("OnEvent", function(self) InterfaceOptionsFrame:Hide() end)
 frame:HookScript("OnShow", function(self) if InCombatLockdown() then InterfaceOptionsFrame:Hide() end TotemTimers.LastGUIPanel = self end)
 frame:RegisterEvent("PLAYER_REGEN_DISABLED")
-TotemTimers.LastGUIPanel = frame
+
 
 
 

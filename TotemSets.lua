@@ -47,7 +47,7 @@ end
 function TotemTimers.ProgramSetButtons()
     local Sets = TotemTimers.ActiveProfile.TotemSets
 	local nr = 0
-	local lastButton = XiTimers.timers[5].button
+	local lastButton = XiTimers.timers[5].button --LaYt
 	for i=1,8 do
         local b = _G["TotemTimers_SetButton"..i]
         if not b then
@@ -63,7 +63,7 @@ function TotemTimers.ProgramSetButtons()
         end
         b:ClearAllPoints()
         --b:SetPoint(buttonlocations[i][1], lastButton, buttonlocations[i][2])
-		b:SetPoint("BOTTOM", lastButton, "TOP")
+		b:SetPoint("BOTTOM", lastButton, "TOP") --LaYt
         lastButton = b
         if Sets[i] then
             for k = 1,4 do
