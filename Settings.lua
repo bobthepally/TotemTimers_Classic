@@ -221,32 +221,55 @@ SettingsFunctions = {
 
     LastWeaponEnchant =
     function(value, Timers)
-        if value == 5 then
+ --[[       if value == 5 then
             Timers[8].button:SetAttribute("type1", "macro")
-            Timers[8].button:SetAttribute("macrotext", "/cast [@none] "..SpellNames[SpellIDs.WindfuryWeapon].."\n/use 16\n/click StaticPopup1Button1")
+            Timers[8].button:SetAttribute("macrotext1", "/cast [@none] "..SpellNames[SpellIDs.WindfuryWeapon].."\n/use 16\n/click StaticPopup1Button1")
+			Timers[8].button:SetAttribute("type2", "macro")
+            Timers[8].button:SetAttribute("macrotext2", "/cast [@none] "..SpellNames[SpellIDs.FlametongueWeapon].."\n/use 17\n/click StaticPopup1Button1")
             Timers[8].button:SetAttribute("doublespell1", SpellNames[SpellIDs.WindfuryWeapon])
             Timers[8].button:SetAttribute("doublespell2", SpellNames[SpellIDs.FlametongueWeapon])
             Timers[8].button:SetAttribute("ds", 1)
         elseif value == 6 then
             Timers[8].button:SetAttribute("type1", "macro")
-            Timers[8].button:SetAttribute("macrotext", "/cast [@none] "..SpellNames[SpellIDs.WindfuryWeapon].."\n/use 16\n/click StaticPopup1Button1")
+            Timers[8].button:SetAttribute("macrotext1", "/cast [@none] "..SpellNames[SpellIDs.WindfuryWeapon].."\n/use 16\n/click StaticPopup1Button1")
+			Timers[8].button:SetAttribute("type2", "macro")
+            Timers[8].button:SetAttribute("macrotext2", "/cast [@none] "..SpellNames[SpellIDs.FrostbrandWeapon].."\n/use 17\n/click StaticPopup1Button1")
             --Timers[8].button:SetAttribute("*spell1", SpellNames[SpellIDs.WindfuryWeapon])
             Timers[8].button:SetAttribute("doublespell1", SpellNames[SpellIDs.WindfuryWeapon])
             Timers[8].button:SetAttribute("doublespell2", SpellNames[SpellIDs.FrostbrandWeapon])
             Timers[8].button:SetAttribute("ds", 1)
-        elseif XiTimers.timers[8].numtimers > 1 then
+        else ]]
+		local spell = select(1,GetSpellInfo(value))
+		local rockb = select(1,GetSpellInfo(8017))
+		if spell ~= rockb and TotemTimers.AvailableTalents.DualWield then
 			Timers[8].button:SetAttribute("type1", "macro")
-            Timers[8].button:SetAttribute("macrotext", "/cast [@none] "..value.."\n/use 16\n/click StaticPopup1Button1")
-           -- Timers[8].button:SetAttribute("*spell1", value)
+            Timers[8].button:SetAttribute("macrotext1", "/cast [@none] "..value.."\n/use 16\n/click StaticPopup1Button1")
             Timers[8].button:SetAttribute("doublespell1", value)
-            Timers[8].button:SetAttribute("doublespell2", value)
-            Timers[8].button:SetAttribute("ds", 1)
         else
             Timers[8].button:SetAttribute("type1", "spell")
             Timers[8].button:SetAttribute("spell1", value)
+			Timers[8].button:SetAttribute("doublespell1", nil)
         end
     end,
         
+    LastWeaponEnchant2 = function(value, Timers) --LAYT???
+        if not value then return end
+		local spell = select(1,GetSpellInfo(value))
+		local rockb = select(1,GetSpellInfo(8017))
+		if spell ~= rockb and TotemTimers.AvailableTalents.DualWield then
+			local btn = "2"
+			if TotemTimers.ActiveProfile.WeaponMenuOnRightclick then btn = "3" end
+			Timers[8].button:SetAttribute("type"..btn, "macro")
+			Timers[8].button:SetAttribute("macrotext"..btn, "/cast [@none] "..value.."\n/use 17\n/click StaticPopup1Button1")
+			Timers[8].button:SetAttribute("doublespell2", value)
+		else
+			local btn = "2"
+			if TotemTimers.ActiveProfile.WeaponMenuOnRightclick then btn = "3" end
+			Timers[8].button:SetAttribute("type"..btn, "spell")
+            Timers[8].button:SetAttribute("spell"..btn, value)
+			Timers[8].button:SetAttribute("doublespell2", nil)
+		end
+    end,
        
      
      HideBlizzTimers =
@@ -408,19 +431,22 @@ SettingsFunctions = {
     BarBindings =
         function(value, Timers)
             for i=1,4 do
-                for j=1,5 do
-                    local key = GetBindingKey("TOTEMTIMERSCAST"..i..j)
+            local actionBar = Timers[i].actionBar
+            local element = Timers[i].nr
+            for j=1,#actionBar.buttons do
+                local button = actionBar.buttons[j]
+                local key = GetBindingKey("TOTEMTIMERSCAST"..element..j)
                     if TotemTimers.ActiveProfile.BarBindings and not TotemTimers.ActiveProfile.MenusAlwaysVisible then
                         if TotemTimers.ActiveProfile.ReverseBarBindings then
-                            getglobal("TT_ActionButton"..i..j.."HotKey"):SetText(key or tostring(10-j))
-                            getglobal("TT_ActionButton"..i..j):SetAttribute("binding", tostring(10-j))
+                        button.hotkey:SetText(key or tostring(10-j))
+                        button:SetAttribute("binding", tostring(10-j))
                         else
-                            getglobal("TT_ActionButton"..i..j.."HotKey"):SetText(key or tostring(j))
-                            getglobal("TT_ActionButton"..i..j):SetAttribute("binding", tostring(j))
+                        button.hotkey:SetText(key or tostring(j))
+                        button:SetAttribute("binding", tostring(j))
                         end
                     else
-                        getglobal("TT_ActionButton"..i..j.."HotKey"):SetText(key or "")
-                        getglobal("TT_ActionButton"..i..j):SetAttribute("binding", nil)
+                    button.hotkey:SetText(key or "")
+                    button:SetAttribute("binding", nil)
                     end
                 end
             end
@@ -826,7 +852,7 @@ SettingsFunctions = {
                 end
             end
         end,
-	AffectedFontSize =
+--[[	AffectedFontSize =
         function(value, Timers)
             for i=1,#Timers do
                 Timers[i].button.rangeCount:SetFont(Timers[i].button.rangeCount:GetFont(), value)
@@ -848,6 +874,7 @@ SettingsFunctions = {
                 Timers[i].button.rangeCount:SetPoint(point, relativeTo, relativePoint, xOfs, value)
         end
         end,
+]]
 --[[    PartyBuffSide = 
 		function(value, Timers)
 			TotemTimers.ReorerPartyBuffs()	

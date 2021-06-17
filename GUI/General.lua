@@ -40,7 +40,7 @@ TotemTimers.options = {
                     get = function(info) return TotemTimers.ActiveProfile.FlashRed end,
                 }, 
                 stoppulse = {
-                    order = 2,
+                    order = 3,
                     type = "toggle",
                     name = L["Stop Pulse"],
                     desc = L["Stop Pulse Desc"],
@@ -48,7 +48,7 @@ TotemTimers.options = {
                     get = function(info) return TotemTimers.ActiveProfile.StopPulse end,
                 },
                 showTimerBars = {
-                    order = 2,
+                    order = 4,
                     type = "toggle",
                     name = L["Show Timer Bars"],
                     desc = L["Displays timer bars underneath times"],
@@ -56,7 +56,7 @@ TotemTimers.options = {
                     get = function(info) return TotemTimers.ActiveProfile.ShowTimerBars end,
                 },
                 timersonbuttons = {
-                    order = 2,
+                    order = 5,
                     type = "toggle",
                     name = L["Timers On Buttons"],
                     desc = L["Timers On Buttons Desc"],
@@ -70,7 +70,7 @@ TotemTimers.options = {
                     get = function(info) return TotemTimers.ActiveProfile.TimersOnButtons end,
                 },
                 hideblizztimers = {
-                    order = 3,
+                    order = 6,
                     type = "toggle",
                     name = L["Hide Blizzard Timers"],
                     set = function(info, val) TotemTimers.ActiveProfile.HideBlizzTimers = val TotemTimers.ProcessSetting("HideBlizzTimers") end,
@@ -87,7 +87,7 @@ TotemTimers.options = {
                 },                  
 ]]
                 tooltips = {
-                    order = 3,
+                    order = 8,
                     type = "toggle",
                     name = L["Show Tooltips"],
                     desc = L["Shows tooltips on timer and totem buttons"],
@@ -95,7 +95,7 @@ TotemTimers.options = {
                     get = function(info) return TotemTimers.ActiveProfile.Tooltips end,
                 },  
                 tooltipsatbuttons = {
-                    order = 3,
+                    order = 9,
                     type = "toggle",
                     name = L["Tooltips At Buttons"],
                     desc = L["Tooltips At Buttons Desc"],
@@ -103,7 +103,7 @@ TotemTimers.options = {
                     get = function(info) return TotemTimers.ActiveProfile.TooltipsAtButtons end,
                 },
                 HideInVehicle = {
-                    order = 3,
+                    order = 10,
                     type = "toggle",
                     name = L["Hide In Vehicles"],
                     desc = L["Hide In Vehicles Desc"],
@@ -111,7 +111,7 @@ TotemTimers.options = {
                     get = function(info) return TotemTimers.ActiveProfile.HideInVehicle end,
                 },                
                 Keybinds = {
-                     order = 4,
+                     order = 11,
                    type = "toggle",
                     name = L["Show Key Bindings"],
                     desc = L["Shows key bindings on totem timers"],
@@ -173,7 +173,7 @@ TotemTimers.options = {
                     get = function(info) return TotemTimers.ActiveProfile.TimeStyle end,
                 },
                 TimerBarTexture = {
-                    order = 24,
+                    order = 34,
                     type = "select",
                     name = L["Timer Bar Texture"],
                     values = AceGUIWidgetLSMlists.statusbar,
@@ -182,7 +182,7 @@ TotemTimers.options = {
                     dialogControl = "LSM30_Statusbar",
                 },                
                 TimeFont = {
-                    order = 28,
+                    order = 35,
                     type = "select",
                     name = L["Time Font"] ,
                     values = AceGUIWidgetLSMlists.font,
@@ -207,7 +207,7 @@ TotemTimers.options = {
                           end,
                 },
                 TimerBarColor = {
-                    order = 40,
+                    order = 37,
                     type = "color",
                     name = L["Timer Bar Color"],
                     hasAlpha = true,
@@ -225,7 +225,7 @@ TotemTimers.options = {
                           end,
                 },
 				CooldownAlpha = {
-                    order = 32,
+                    order = 38,
                     type = "range",
                     name = L["Cooldown Opacity"],
                     desc = L["Opacity of the cooldown swirls"],

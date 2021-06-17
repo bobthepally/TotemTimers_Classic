@@ -223,6 +223,9 @@ function XiTimers:new(nroftimers, unclickable)
     self.button.StartMove = XiTimers.StartMoving
     self.button.StopMove = XiTimers.StopMoving
 	self.button:RegisterForDrag("LeftButton")
+	self.button.ShowTooltip = function() end
+	self.button.HideTooltip = function() end
+
     
 	table.insert(Timers, self)
 
@@ -435,8 +438,9 @@ function XiTimers:ShowTimer()
         if not self.timerOnButton or self.forceBar then
             self.button.time:Hide()
             self:ShowTimerBar(1)
-            self.timerBars[1]:SetValue(self.timers[1])
+            if self.visibleTimerBars then self.timerBars[1]:SetValue(self.timers[1]) end
         else
+            self.button.time:SetTextColor(self.timeColor.r, self.timeColor.g, self.timeColor.b, 1)
             self:HideTimerBar(1)
             self.button.time:Show()
             SetButtonTime(self.button.time, self.timers[1], nil)

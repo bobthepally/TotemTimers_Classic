@@ -14,11 +14,15 @@ local SpellNames = TotemTimers.SpellNames
 local SpellIDs = TotemTimers.SpellIDs
 local SpellTextures = TotemTimers.SpellTextures
 local AvailableSpells = TotemTimers.AvailableSpells
+local AvailableTalents = TotemTimers.AvailableTalents
 
 local earthShieldTarget = UnitName("player")
 local earthShieldTargetGUID = nil
 
 local earthshieldTimer = nil
+local weapon = nil
+local ankh = nil
+local shield = nil
 
 local playerName = UnitName("player")
 
@@ -39,10 +43,10 @@ end
 
 function TotemTimers.CreateTrackers()
 	-- ankh tracker
-	local ankh = XiTimers:new(1)
-    local shield = XiTimers:new(1)
+    ankh = XiTimers:new(1)
+    shield = XiTimers:new(1)
     earthshieldTimer = XiTimers:new(1)
-    local weapon = XiTimers:new(2)
+    weapon = XiTimers:new(2)
 
 	ankh.button:SetScript("OnEvent", TotemTimers.AnkhEvent)
 	ankh.button.icons[1]:SetTexture(SpellTextures[SpellIDs.Ankh])
@@ -121,6 +125,10 @@ function TotemTimers.CreateTrackers()
     end
     earthshieldTimer.button:RegisterForClicks("LeftButtonDown", "RightButtonDown", "MiddleButtonDown", "Button4Down")
     earthshieldTimer.manaCheck = SpellNames[SpellIDs.EarthShield]
+	earthshieldTimer.button.ShowTooltip = TotemTimers.ShieldTooltip
+	earthshieldTimer.button.HideTooltip = TotemTimers.HideTooltip
+	earthshieldTimer.button:SetAttribute("_onenter", [[ if self:GetAttribute("tooltip") then control:CallMethod("ShowTooltip") end]])
+	earthshieldTimer.button:SetAttribute("_onleave", [[ control:CallMethod("HideTooltip") ]])
     earthshieldTimer.nameframe = CreateFrame("Frame", earthshieldTimer.button)
     earthshieldTimer.nameframe:SetParent(earthshieldTimer.button)
     earthshieldTimer.nameframe:SetPoint("TOPLEFT", earthshieldTimer.button)
@@ -151,28 +159,10 @@ function TotemTimers.CreateTrackers()
     end
 
     --create maintank bar for es
-    earthshieldTimer.bar = TTActionBars:new(4, earthshieldTimer.button, nil, TotemTimers_TrackerFrame)
-    earthshieldTimer.button:SetAttribute("_onenter", [[
-                                              if self:GetAttribute("OpenMenu") == "mouseover" then
-                                                  control:ChildUpdate("show", true)
-                                              end ]])
-    earthshieldTimer.button:WrapScript(earthshieldTimer.button, "OnClick", [[ if button == self:GetAttribute("OpenMenu") then
-                                                              local open = self:GetAttribute("open")
-                                                              control:ChildUpdate("show", not open)
-                                                              self:SetAttribute("open", not open)
-                                                          end]])
+    earthshieldTimer.actionBar = TTActionBars:new(4, earthshieldTimer.button, nil, TotemTimers_TrackerFrame)
 
-    earthshieldTimer.button:SetAttribute("_onattributechanged", [[ if name=="hide" then
-                                                                 control:ChildUpdate("show", false)
-                                                             elseif name == "state-invehicle" then
-                                                                if value == "show" and self:GetAttribute("active") then
-                                                                    self:Show()
-                                                                else
-                                                                    self:Hide()
-                                                                end
-                                                             end]])
     for i = 1, 4 do
-        earthshieldTimer.button:WrapScript(earthshieldTimer.bar.buttons[i], "PostClick", [[
+        earthshieldTimer.button:WrapScript(earthshieldTimer.actionBar.buttons[i], "PostClick", [[
                 local p = self:GetParent()
                 local nr = p:GetAttribute("RecastButton")
                 if nr then
@@ -211,7 +201,7 @@ function TotemTimers.CreateTrackers()
         weapon.button.icons[1]:SetTexture(SpellTextures[SpellIDs.WindfuryWeapon])
         weapon.button.icons[2]:SetTexture(SpellTextures[TotemTimers.ActiveProfile.LastWeaponEnchant == 5 and SpellIDs.FlametongueWeapon or SpellIDs.FrostbrandWeapon])
     else
-        if (TotemTimers.ActiveProfile.LastWeaponEnchant) then
+        if TotemTimers.ActiveProfile.LastWeaponEnchant then
             local texture = SpellTextures[TotemTimers.NameToSpellID[TotemTimers.ActiveProfile.LastWeaponEnchant]]
             weapon.button.icons[1]:SetTexture(texture)
             weapon.button.icons[2]:SetTexture(texture)
@@ -235,15 +225,19 @@ function TotemTimers.CreateTrackers()
     TotemTimers.SetNumWeaponTimers()
 
     weapon.button.HideTooltip =  TotemTimers.HideTooltip
-    WeaponBar = TTActionBars:new(7, weapon.button, nil, TotemTimers_TrackerFrame, "weapontimer")
-    weapon.bar = WeaponBar
+    weapon.actionBar = TTActionBars:new(7, weapon.button, nil, TotemTimers_TrackerFrame, "weapontimer")
     weapon.button.ShowTooltip = TotemTimers.WeaponButtonTooltip
     weapon.button.SaveLastEnchant = function(self, name)
-        if name == "spell1" then
+	--	_G.DevTools_Dump(name)
+        if name == "spell1" and self:GetAttribute("spell1") then
             TotemTimers.ActiveProfile.LastWeaponEnchant = self:GetAttribute("spell1")
---         elseif name == "spell2" or name == "spell3" then
---             TotemTimers.ActiveProfile.LastWeaponEnchant2 = self:GetAttribute("spell2") or self:GetAttribute("spell3")
-        elseif name == "doublespell2" then
+        elseif name == "spell2" or name == "spell3" then
+            TotemTimers.ActiveProfile.LastWeaponEnchant2 = self:GetAttribute("spell2") or self:GetAttribute("spell3")
+		elseif name == "doublespell1" and self:GetAttribute("doublespell1") then
+			TotemTimers.ActiveProfile.LastWeaponEnchant = self:GetAttribute("doublespell1")
+		elseif name == "doublespell2" and self:GetAttribute("doublespell2") then
+			TotemTimers.ActiveProfile.LastWeaponEnchant2 = self:GetAttribute("doublespell2")
+ --[[
             local ds1 = self:GetAttribute("doublespell1")
             local ds2 = self:GetAttribute("doublespell2")
             if ds2 then
@@ -255,46 +249,25 @@ function TotemTimers.CreateTrackers()
 					TotemTimers.ActiveProfile.LastWeaponEnchant = ds1
                 end
             end
+]]
         end
 	TotemTimers.UpdateMacro()
     end
-    weapon.button:SetAttribute("_onattributechanged", [[ if name=="hide" then
-                                                             control:ChildUpdate("show", false)
-                                                             control:CallMethod("HideTooltip")
-                                                         elseif name == "spell1" or name == "doublespell1" or name == "doublespell2" or name == "spell2" or name == "spell3"then
+    weapon.button:SetAttribute("_onattributechanged", [[ if name == "spell1" or name == "doublespell1" or name == "doublespell2" or name == "spell2" or name == "spell3" then
                                                              control:CallMethod("SaveLastEnchant", name)
-                                                         elseif name == "state-invehicle" then
-                                                            if value == "show" and self:GetAttribute("active") then
-                                                                self:Show()
-                                                            else
-                                                                self:Hide()
-                                                            end
-                                                         end]])
-    weapon.button:SetAttribute("_onenter", [[ if self:GetAttribute("tooltip") then control:CallMethod("ShowTooltip") end
-                                              if self:GetAttribute("OpenMenu") == "mouseover" then
-                                                  control:ChildUpdate("show", true)
-                                              end ]])
-    weapon.button:SetAttribute("_onleave", [[ control:CallMethod("HideTooltip") ]])
-    weapon.button:WrapScript(weapon.button, "OnClick", [[ if button == self:GetAttribute("OpenMenu") then
-                                                              local open = self:GetAttribute("open")
-                                                              control:ChildUpdate("show", not open)
-															  self:SetAttribute("open", not open)
-                                                            elseif button == "close" or button=="Button5" then
-                                                                control:ChildUpdate("show", false)
-                                                                self:SetAttribute("open", false)
-                                                          end]])
-    weapon.button:WrapScript(weapon.button, "PostClick", [[ if button == "LeftButton" then
-                                                                local ds1 = self:GetAttribute("doublespell1")
-                                                                if ds1 then
-                                                                    if IsControlKeyDown() or self:GetAttribute("ds") ~= 1 then
-                                                                        self:SetAttribute("macrotext", "/cast [@none] ".. ds1 .."\n/use 16\n/click StaticPopup1Button1")
-																		self:SetAttribute("ds",1)
-                                                                    else
-                                                                        self:SetAttribute("macrotext", "/cast [@none] "..self:GetAttribute("doublespell2").."\n/use 17\n/click StaticPopup1Button1")
-																		self:SetAttribute("ds",2)
-                                                                    end
-                                                                end
                                                            end]])
+    -- weapon.button:WrapScript(weapon.button, "PostClick", [[ if button == "LeftButton" then
+                                                                -- local ds1 = self:GetAttribute("doublespell1")
+                                                                -- if ds1 then
+                                                                    -- if IsControlKeyDown() or self:GetAttribute("ds") ~= 1 then
+                                                                        -- self:SetAttribute("macrotext", "/cast [@none] ".. ds1 .."\n/use 16\n/click StaticPopup1Button1")
+																		-- self:SetAttribute("ds",1)
+                                                                    -- else
+                                                                        -- self:SetAttribute("macrotext", "/cast [@none] "..self:GetAttribute("doublespell2").."\n/use 17\n/click StaticPopup1Button1")
+																		-- self:SetAttribute("ds",2)
+                                                                    -- end
+                                                                -- end
+                                                           -- end]])
 
     weapon.button:SetAttribute("ctrl-type1", "cancelaura")
     weapon.button:SetAttribute("ctrl-target-slot1", GetInventorySlotInfo("MainHandSlot"))
@@ -303,7 +276,7 @@ function TotemTimers.CreateTrackers()
     weapon.button:SetScript("OnDragStop", function(self)
         XiTimers.StopMoving(self)
         if not InCombatLockdown() then
-            self:SetAttribute("hide", true)
+            --self:SetAttribute("hide", true)
         end
         TotemTimers.ProcessSetting("WeaponBarDirection")
     end)
@@ -358,7 +331,7 @@ function TotemTimers.ShieldEvent(self, event, unit)
             CooldownFrame_Set(self.cooldown, start, duration, enable)
         end
 	end
-	elseif unit=="player" then
+	elseif unit == "player" then
 		self.count:SetText("")
         local hasBuff = false
 		local buffs = TotemTimers.UnitBuffs(unit)
@@ -460,45 +433,43 @@ function TotemTimers.OrderTrackers()
 end
 
 function TotemTimers.SetWeaponTrackerSpells()
-    WeaponBar:ResetSpells()
-    local _,_,_,_,rank = GetTalentInfo(2,18)
+    weapon.actionBar:ResetSpells()
 	
     if  AvailableSpells[SpellIDs.WindfuryWeapon] then
-        if (rank < 1 ) then 
-        WeaponBar:AddSpell(SpellNames[SpellIDs.WindfuryWeapon])
+        if not AvailableTalents.DualWield then 
+			weapon.actionBar:AddSpell(SpellIDs.WindfuryWeapon)
 		else
-			WeaponBar:AddDoubleSpell(SpellNames[SpellIDs.WindfuryWeapon],SpellNames[SpellIDs.WindfuryWeapon])
+			weapon.actionBar:AddDoubleSpell(SpellIDs.WindfuryWeapon, SpellIDs.WindfuryWeapon)
 		end
     end
     if AvailableSpells[SpellIDs.RockbiterWeapon] then
-        WeaponBar:AddSpell(SpellNames[SpellIDs.RockbiterWeapon])
+        weapon.actionBar:AddSpell(SpellIDs.RockbiterWeapon, false)
     end
     if  AvailableSpells[SpellIDs.FlametongueWeapon] then
-		if (rank < 1 ) then 
-        WeaponBar:AddSpell(SpellNames[SpellIDs.FlametongueWeapon])
+		if not AvailableTalents.DualWield then 
+			weapon.actionBar:AddSpell(SpellIDs.FlametongueWeapon)
 		else
-			WeaponBar:AddDoubleSpell(SpellNames[SpellIDs.FlametongueWeapon],SpellNames[SpellIDs.FlametongueWeapon])
+			weapon.actionBar:AddDoubleSpell(SpellIDs.FlametongueWeapon, SpellIDs.FlametongueWeapon)
 		end
     end
     if  AvailableSpells[SpellIDs.FrostbrandWeapon] then
-		if (rank < 1 ) then 
-        WeaponBar:AddSpell(SpellNames[SpellIDs.FrostbrandWeapon])
+		if not AvailableTalents.DualWield then 
+			weapon.actionBar:AddSpell(SpellIDs.FrostbrandWeapon)
 		else
-			WeaponBar:AddDoubleSpell(SpellNames[SpellIDs.FrostbrandWeapon],SpellNames[SpellIDs.FrostbrandWeapon])
+			weapon.actionBar:AddDoubleSpell(SpellIDs.FrostbrandWeapon, SpellIDs.FrostbrandWeapon)
     end
 
     end
-
-    
-
-    if (rank > 0) then
+--[[
+    if AvailableTalents.DualWield then
         if  AvailableSpells[SpellIDs.WindfuryWeapon] and AvailableSpells[SpellIDs.FlametongueWeapon] then
-        WeaponBar:AddDoubleSpell(SpellNames[SpellIDs.WindfuryWeapon],SpellNames[SpellIDs.FlametongueWeapon])
+			weapon.actionBar:AddDoubleSpell(SpellNames[SpellIDs.WindfuryWeapon], SpellNames[SpellIDs.FlametongueWeapon])
     end
     if  AvailableSpells[SpellIDs.WindfuryWeapon] and AvailableSpells[SpellIDs.FrostbrandWeapon] then
-        WeaponBar:AddDoubleSpell(SpellNames[SpellIDs.WindfuryWeapon],SpellNames[SpellIDs.FrostbrandWeapon])
+			weapon.actionBar:AddDoubleSpell(SpellNames[SpellIDs.WindfuryWeapon], SpellNames[SpellIDs.FrostbrandWeapon])
         end
     end
+]]
 end
 
 local mainMsg = ""
@@ -508,7 +479,7 @@ local GetWeaponEnchantInfo = GetWeaponEnchantInfo
 function TotemTimers.WeaponUpdate(self, elapsed)
     local enchant, expiration, _, mainID, offenchant, offExpiration, _, offID = GetWeaponEnchantInfo()
 	local WeaponEnchants = TotemTimers.WeaponEnchants
-    for k,v in pairs({{enchant, expiration, mainID}, {offenchant, offExpiration, offID}}) do
+    for k, v in pairs({ { enchant, expiration, mainID }, { offenchant, offExpiration, offID } }) do
         if v[1] then
             if v[2] / 1000 > self.timers[k] then
                 local texture, spell
@@ -519,6 +490,7 @@ function TotemTimers.WeaponUpdate(self, elapsed)
                 else
                     spell, _, _, _, _, _, _, _, _, texture = GetItemInfo(GetInventoryItemID("player", 15 + k))
             end
+                self["enchant"..k] = spell
                 self.button.icons[k]:SetTexture(texture)
                 self.warningIcons[k] = texture
                 self.warningSpells[k] = spell
@@ -603,17 +575,21 @@ local function SetUnit(unit, button)
     local _, class = UnitClass(unit)
     if class then
         if RAID_CLASS_COLORS[class] then
-            button.hotkey:SetTextColor(RAID_CLASS_COLORS[class].r, RAID_CLASS_COLORS[class].g, RAID_CLASS_COLORS[class].b)
+            button.hotkey:SetTextColor(RAID_CLASS_COLORS[class]:GetRGB())
         end
-        button.icon:SetTexture("Interface\\TargetingFrame\\UI-Classes-Circles")
-        button.icon:SetTexCoord(unpack(CLASS_ICON_TCOORDS[class]))
+	--	_G.DevTools_Dump(class)
+		local t = CLASS_ICON_TCOORDS[class]
+	--	_G.DevTools_Dump(t)
+        button.icon:SetTexture("Interface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES")
+        button.icon:SetTexCoord(unpack(t))
+		
     else
         MainTankListUpdateFrame:Show()
     end
 end
 
 function TotemTimers.SetEarthShieldMainTankList()
-    earthshieldTimer.bar:ResetSpells()
+    earthshieldTimer.actionBar:ResetSpells()
 
     if GetNumGroupMembers() > 0 then
         local b = 0
@@ -622,18 +598,18 @@ function TotemTimers.SetEarthShieldMainTankList()
             if UnitExists(unit) then
                 if (GetPartyAssignment("MAINTANK", unit)) and b < 4 then
                     b = b + 1
-                    earthshieldTimer.bar:AddSpell(SpellIDs.EarthShield)
-                    SetUnit(unit, earthshieldTimer.bar.buttons[b])
+                    earthshieldTimer.actionBar:AddSpell(SpellIDs.EarthShield, true)
+                    SetUnit(unit, earthshieldTimer.actionBar.buttons[b])
                 end
             end
         end
         if b < 4 then
-            earthshieldTimer.bar:AddSpell(SpellIDs.EarthShield)
-            SetUnit("player", earthshieldTimer.bar.buttons[b + 1])
+            earthshieldTimer.actionBar:AddSpell(SpellIDs.EarthShield, true)
+            SetUnit("player", earthshieldTimer.actionBar.buttons[b + 1])
         end
     else
-        earthshieldTimer.bar:AddSpell(SpellIDs.EarthShield)
-        SetUnit("player", earthshieldTimer.bar.buttons[1])
+        earthshieldTimer.actionBar:AddSpell(SpellIDs.EarthShield, true)
+        SetUnit("player", earthshieldTimer.actionBar.buttons[1])
     end
 end
 

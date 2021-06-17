@@ -53,37 +53,47 @@ function TTActionBars:new(numbuttons, parent, secondanchor, directionanchor, bar
             b:SetNormalTexture(nil)
         b.icon:Show()
 		
-		--[[b.ConfigAutoHide = function(self)
-			RegisterAutoHide(self, 0)
-			for i = 1,self.bar.numspells do
-				--if self.bar.buttons[i] ~= self then
-					AddToAutoHide(self, self.bar.buttons[i])
-				--end
-			end
-			AddToAutoHide(self, self:GetParent())
-		end]]
-
 		b:SetAttribute("_childupdate-show", [[if self:GetAttribute("alwaysshow") or self:GetAttribute("inactive") then return end
                                                if message then 
                                                    self:Show()
                                                else
                                                    self:Hide()
                                                end ]])
+		b:SetAttribute("_childupdate-toggle", [[if self:GetAttribute("alwaysshow") or self:GetAttribute("inactive") then return end
+                                               if self:IsVisible() then
+                                                   self:Hide()
+                                               else
+                                                   self:Show()
+                                               end ]])
+
+
 		b:SetAttribute("_onshow", [[if self:GetAttribute("alwaysshow") or self:GetAttribute("inactive") then return end
-		                            self:RegisterAutoHide(0)
-								    for _,v in pairs(actionbuttons) do
-										if v:IsProtected() and not v:GetAttribute("inactive") then self:AddToAutoHide(v) end
-									end
-									self:AddToAutoHide(self:GetParent())
 									local b = self:GetAttribute("binding")
                                     if b then
                                         self:SetBindingClick(true, b, self:GetName())
                                     end
                                     control:CallMethod("OnShow")]])
 
+        parent:SetAttribute("_onenter", [[ control:CallMethod("ShowTooltip")
+                                              if self:GetAttribute("OpenMenu") == "mouseover" then
+                                                  control:ChildUpdate("show", true)
+                                              end ]])
+
+        parent:SetAttribute("_onleave", [[ owner:CallMethod("HideTooltip")
+            if not self:IsUnderMouse(true) then
+                owner:ChildUpdate("show", false)
+            end]])
+
+        parent:WrapScript(parent, "OnClick", [[ if button == self:GetAttribute("OpenMenu") then
+                                                       control:ChildUpdate("show", true)
+                                                   elseif button == "close" or button == "Button5" then
+                                                       control:ChildUpdate("show", false)
+                                                   end
+                                                 ]])
+
         b:SetAttribute("_onhide", [[self:ClearBindings() self:GetParent():SetAttribute("open", false) control:CallMethod("HideTooltip")]])
         b:SetAttribute("_onenter", [[ if self:GetAttribute("tooltip") then control:CallMethod("ShowTooltip") end]])
-        b:SetAttribute("_onleave", [[ control:CallMethod("HideTooltip")]])
+        b:SetAttribute("_onleave", [[ control:CallMethod("HideTooltip") if not self:GetParent():IsUnderMouse(true) then self:GetParent():ChildUpdate("show", false) end]])
         b.OnShow = function(self) end -- override if button should do additional stuff on show
         
 		b:RegisterForClicks("LeftButtonUp", "RightButtonUp", "MiddleButtonUp")
@@ -144,40 +154,66 @@ function TTActionBars:new(numbuttons, parent, secondanchor, directionanchor, bar
                                                     end
                                                 end
                                                 if not self:GetAttribute("alwaysshow") then
-                                                    self:GetParent():SetAttribute("hide", true)
+                                                    self:GetParent():ChildUpdate("show", false)
                                                 end]])
         else
-            parent:WrapScript(b, "OnClick", [[  if button ~= "LeftButton" then
-                                                    if self:GetAttribute("*spell1") then
-                                                        local b = 1
-                                                        if IsShiftKeyDown() then
-                                                            b = 2 
-                                                            if self:GetParent():GetAttribute("OpenMenu") == "RightButton" then
-                                                                b = 3
+            parent:WrapScript(b, "OnClick", [[  
+				if IsShiftKeyDown() and not self:GetAttribute("spell1") then
+					if button == "LeftButton" then
+						
+							self:GetParent():SetAttribute("doublespell1", self:GetAttribute("doublespell1"))
+							self:GetParent():SetAttribute("type1", "macro")
+                            self:GetParent():SetAttribute("macrotext1", "/cast [@none] "..self:GetAttribute("doublespell1").."\n/use 16\n/click StaticPopup1Button1")
+
+					elseif button == "RightButton" then
+
+							self:GetParent():SetAttribute("doublespell2", self:GetAttribute("doublespell2"))
+							self:GetParent():SetAttribute("type2", "macro")
+                            self:GetParent():SetAttribute("macrotext2", "/cast [@none] "..self:GetAttribute("doublespell2").."\n/use 17\n/click StaticPopup1Button1")
+
                                                             end
                                                         end
-                                                        if b == 1 then
+				if button ~= "LeftButton" and self:GetAttribute("spell1") then
+					self:GetParent():SetAttribute("type1", "spell")
+                    self:GetParent():SetAttribute("spell1", self:GetAttribute("spell1"))
                                                             self:GetParent():SetAttribute("doublespell1", nil)
                                                             self:GetParent():SetAttribute("doublespell2", nil)
                                                         end
-                                                        self:GetParent():SetAttribute("type"..b, "spell")
-                                                        self:GetParent():SetAttribute("spell"..b, self:GetAttribute("*spell1"))
-                                                    elseif not IsShiftKeyDown() then
-                                                        self:GetParent():SetAttribute("doublespell1", self:GetAttribute("doublespell1"))
-                                                        self:GetParent():SetAttribute("doublespell2", self:GetAttribute("doublespell2"))
-                                                        self:GetParent():SetAttribute("type1", "macro")
-                                                        self:GetParent():SetAttribute("macrotext", "/cast [@none] "..self:GetAttribute("doublespell1").."\n/use 16\n/click StaticPopup1Button1")
-                                                        self:GetParent():SetAttribute("ds",1)
-                                                    end
-                                                end
                                                 if not self:GetAttribute("alwaysshow") then
-                                                    self:GetParent():SetAttribute("hide", true)
-                                                end]])
+                    self:GetParent():ChildUpdate("show", true)
         end
+			]])
             
+												-- if button ~= "LeftButton" then
+                                                    -- if self:GetAttribute("*spell1") then
+                                                        -- local b = 1
+                                                        -- if IsShiftKeyDown() then
+                                                            -- b = 2 
+                                                            -- if self:GetParent():GetAttribute("OpenMenu") == "RightButton" then
+                                                                -- b = 3
+                                                            -- end
+                                                        -- end
+                                                        -- if b == 1 then
+                                                            -- self:GetParent():SetAttribute("doublespell1", nil)
+                                                            -- self:GetParent():SetAttribute("doublespell2", nil)
+                                                        -- end
+                                                        -- self:GetParent():SetAttribute("type"..b, "spell")
+                                                        -- self:GetParent():SetAttribute("spell"..b, self:GetAttribute("*spell1"))
+                                                    -- elseif not IsShiftKeyDown() then
+                                                        -- self:GetParent():SetAttribute("doublespell1", self:GetAttribute("doublespell1"))
+                                                        -- self:GetParent():SetAttribute("doublespell2", self:GetAttribute("doublespell2"))
+                                                        -- self:GetParent():SetAttribute("type1", "macro")
+                                                        -- self:GetParent():SetAttribute("macrotext1", "/cast [@none] "..self:GetAttribute("doublespell1").."\n/use 16\n/click StaticPopup1Button1")
+														-- self:GetParent():SetAttribute("type2", "macro")
+                                                        -- self:GetParent():SetAttribute("macrotext2", "/cast [@none] "..self:GetAttribute("doublespell2").."\n/use 17\n/click StaticPopup1Button1")
+                                                        -- self:GetParent():SetAttribute("ds",1)
+                                                    -- end
+                                                -- end
+                                                -- if not self:GetAttribute("alwaysshow") then
+                                                    -- self:GetParent():ChildUpdate("show", true)
+                                                -- end]])
 	end
-	for i = 1,numbuttons do
-		self.buttons[i]:Execute([[ actionbuttons = newtable()  self:GetParent():GetChildList(actionbuttons) ]])
+            
 	end
 	table.insert(TTActionBars.bars, self)
 	return self
@@ -226,10 +262,22 @@ function TTActionBars:SetSpell(nr, spell, asname)
 end
 
 
-function TTActionBars:AddSpell(spell)
+function TTActionBars:AddSpell(spell, act)
     if self.numspells >= self.numbuttons then return end
     self.numspells = self.numspells + 1
-    self:SetSpell(self.numspells, spell)
+	local button = self.buttons[self.numspells]
+    local texture = GetSpellTexture(spell)
+	spell = TotemTimers.GetMaxRank(spell)
+	if act then 
+		button:SetAttribute("*spell1", spell)
+	else 
+		button:SetAttribute("spell1", spell)
+	end
+	button:SetAttribute("*spell2", nil)
+	button:SetAttribute("inactive", false)
+	button.icon:SetTexture(texture)
+	local f = button:GetScript("OnEvent")
+    if f then f(button) end
 end
 
 function TTActionBars:SetSpells(spells, asnames)
@@ -242,17 +290,20 @@ function TTActionBars:SetSpells(spells, asnames)
     self.numspells = #spells
 end
 
-
 function TTActionBars:AddDoubleSpell(spell1,spell2)
     if self.numspells >= self.numbuttons then return end
     self.numspells = self.numspells+1
     local button = self.buttons[self.numspells]
-    local _,_,texture = GetSpellInfo(spell1)
-    local _,_,texture2 = GetSpellInfo(spell2)
+    local texture = GetSpellTexture(spell1)
+    local texture2 = GetSpellTexture(spell2)
+	spell1 = TotemTimers.GetMaxRank(spell1)
+	spell2 = TotemTimers.GetMaxRank(spell2)
 	button:SetAttribute("doublespell1", spell1)
     button:SetAttribute("doublespell2", spell2)
 	button:SetAttribute("type1", "macro")
-    button:SetAttribute("macrotext", "/cast [@none] "..spell1.."\n/use 16\n/click StaticPopup1Button1")
+    button:SetAttribute("macrotext1", "/cast [@none] "..spell1.."\n/use 16\n/click StaticPopup1Button1")
+    button:SetAttribute("type2", "macro")
+    button:SetAttribute("macrotext2", "/cast [@none] "..spell2.."\n/use 17\n/click StaticPopup1Button1")	
 	button:SetAttribute("inactive", false)
     button.icon:SetTexture(texture)
     button.icon2:SetTexture(texture2)

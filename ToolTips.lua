@@ -70,6 +70,7 @@ end
 
 
 function TotemTimers.TotemTooltip(self)
+    if not self:GetAttribute("tooltip") then return end
     local spell = self:GetAttribute("*spell1")
     if spell and type(spell) == "string" then spell = select(7, GetSpellInfo(spell)) end
     TotemTimers.PositionTooltip(self)
@@ -91,7 +92,7 @@ end
 
 
 function TotemTimers.SetTooltip(self)
-    if not TotemTimers.ActiveProfile.Tooltips then return end
+    if not self:GetAttribute("tooltip") then return end
     TotemTimers.PositionTooltip(self)
     GameTooltip:AddLine(L["Leftclick to open totem set menu"],r,g,b,1)
     GameTooltip:AddLine(L["Rightclick to save active totem configuration as set"],r,g,b,1)
@@ -116,8 +117,92 @@ function TotemTimers.SetButtonTooltip(self)
     GameTooltip:Show()
 end
 
+function TotemTimers.WeaponButtonTooltip(self)
+    if not self:GetAttribute("tooltip")  then return end
+
+    GameTooltip:ClearLines()
+    TotemTimers.PositionTooltip(self)
+	GameTooltip:AddLine("Weapon buffs:")
+    local we = TotemTimers.WeaponEnchants
+	local enchant, expiration, _, mainID, offenchant, offExpiration, _, offID = GetWeaponEnchantInfo()
+	if enchant and expiration > 0 then
+		local spell, _, icon = GetSpellInfo(we[mainID])
+		if spell then
+			GameTooltip:AddLine("MainHand: |T"..icon..":0|t "..spell)
+		end
+	end
+	if offenchant and offExpiration > 0 then
+		local spell, _, icon = GetSpellInfo(we[offID])
+		if spell then
+			GameTooltip:AddLine("OffHand: |T"..icon..":0|t "..spell)
+		end
+	end
+	
+		GameTooltip:AddLine(" ")
+    local s = self:GetAttribute("spell1")
+	
+    if s and not self:GetAttribute("doublespell1") then
+        local name,_,texture = GetSpellInfo(s)
+        if name ~= nil then
+            text = format(L["Leftclick: %s"], "|T"..texture..":0|t "..name)
+            GameTooltip:AddLine(text,r,g,b,1)
+	end
+    else
+		local ds1 = self:GetAttribute("doublespell1")
+		local ds2 = self:GetAttribute("doublespell2")
+		if ds1 then
+			local name,_,texture = GetSpellInfo(ds1)
+			ds1 = "|T"..texture..":0|t "..name
+			GameTooltip:AddLine(format(L["Leftclick MainHand: %s"], ds1),r,g,b,1)
+		end
+		if ds2 then
+			name,_,texture = GetSpellInfo(ds2)
+			ds2 = "|T"..texture..":0|t "..name
+			GameTooltip:AddLine(format(L["Rightclick OffHand: %s"], ds2),r,g,b,1)
+	end
+	end
+	GameTooltip:AddLine(L["Ctrl-Leftclick remove MainHand buff"],r,g,b,1)
+	GameTooltip:AddLine(L["Ctrl-Rightclick remove OffHand buff"],r,g,b,1)
+	GameTooltip:Show()
+end
+
+function TotemTimers.WeaponBarTooltip(self)
+
+    if not self:GetAttribute("tooltip")   then return end
+
+    GameTooltip:ClearLines()
+    TotemTimers.PositionTooltip(self)
+	local spell = self:GetAttribute("spell1")
+--	_G.DevTools_Dump(spell)
+    if spell and not self:GetAttribute("doublespell1") then
+		if spell and type(spell) == "string" then spell = select(7, GetSpellInfo(spell)) end
+        local name,_,texture = GetSpellInfo(spell)
+        if name ~= nil then
+			SetTooltipSpellID(spell)
+			GameTooltip:AddLine(" ")
+            GameTooltip:AddLine(L["Leftclick apply to MainHand"],r,g,b,1)
+			GameTooltip:AddLine(L["Rightclick assign spell to MainHand buff timer"],r,g,b,1)
+			
+        end
+    else
+ 		local ds1 = self:GetAttribute("doublespell1")
+		local ds2 = self:GetAttribute("doublespell2")
+		if ds1 and type(ds1) == "string" then ds1 = select(7, GetSpellInfo(ds1)) end
+		if ds1 then
+			SetTooltipSpellID(ds1)
+			GameTooltip:AddLine(" ")
+		end
+		GameTooltip:AddLine(L["Leftclick apply to MainHand"],r,g,b,1)
+		GameTooltip:AddLine(L["Rightclick apply to Offhand"],r,g,b,1)
+		GameTooltip:AddLine(" ")
+		GameTooltip:AddLine(L["Shift-Leftclick assign spell to MainHand buff timer"],r,g,b,1)
+		GameTooltip:AddLine(L["Shift-Rightclick assign spell to Offhand buff timer"],r,g,b,1)
+    end
+	GameTooltip:Show()
+end
+
 function TotemTimers.ShieldTooltip(self)
-	if not TotemTimers.ActiveProfile.Tooltips then return end
+	if not self:GetAttribute("tooltip")  then return end
     GameTooltip:ClearLines()
     TotemTimers.PositionTooltip(self)
 	
@@ -128,7 +213,7 @@ function TotemTimers.ShieldTooltip(self)
 	if aspell ~= nil then
 		SetTooltipSpellID(aspell)
 		GameTooltip:AddLine(" ")
-	end
+		end
 	if spell1 and type(spell1) == "string" then spell1 = select(7, GetSpellInfo(spell1)) end
 	local name,_,texture = GetSpellInfo(spell1)
 	if name ~= nil then
@@ -136,93 +221,8 @@ function TotemTimers.ShieldTooltip(self)
 	end
 	if spell2 and type(spell2) == "string" then spell2 = select(7, GetSpellInfo(spell2)) end
 	local name,_,texture = GetSpellInfo(spell2)
-	if name ~= nil then
+        if name ~= nil then
 		GameTooltip:AddLine(format(L["Rightclick: %s"], "|T"..texture..":0|t "..name),r,g,b,1)
-	end
-	GameTooltip:Show()
-end
-
-function TotemTimers.WeaponBarTooltip(self)
-	if not TotemTimers.ActiveProfile.Tooltips then return end
-    GameTooltip:ClearLines()
-    TotemTimers.PositionTooltip(self)
-	local spell = self:GetAttribute("*spell1")
-    if spell and not self:GetAttribute("doublespell1") then
-		if spell and type(spell) == "string" then spell = select(7, GetSpellInfo(spell)) end
-        local name,_,texture = GetSpellInfo(spell)
-        if name ~= nil then
-			SetTooltipSpellID(spell)
-			GameTooltip:AddLine(" ")
-            GameTooltip:AddLine(format(L["Leftclick: %s"], "|T"..texture..":0|t "..name),r,g,b,1)
-			GameTooltip:AddLine(L["Rightclick to assign spell to weapon buff timer"],r,g,b,1)
         end
-    else
- 		local ds1 = self:GetAttribute("doublespell1")
-		local ds2 = self:GetAttribute("doublespell2")
-		if ds1 and type(ds1) == "string" then ds1 = select(7, GetSpellInfo(ds1)) end
-		if ds1 then
-			SetTooltipSpellID(ds1)
-			GameTooltip:AddLine(" ")
-		end
-		local name,_,texture = GetSpellInfo(ds1)
-		ds1 = "|T"..texture..":0|t "..name
-		name,_,texture = GetSpellInfo(ds2)
-		ds2 = "|T"..texture..":0|t "..name
-		if ds1 and ds2 then
-			GameTooltip:AddLine(format(L["Leftclick: %s"], ds1),r,g,b,1)
-			GameTooltip:AddLine(L["Rightclick to assign doublespell to weapontimer"],r,g,b,1)
-			GameTooltip:AddLine(ds1,r,g,b,1)
-			GameTooltip:AddLine(ds2,r,g,b,1)
-		end
-    end
-	GameTooltip:Show()
-end
-
-function TotemTimers.WeaponButtonTooltip(self)
-    if not TotemTimers.ActiveProfile.Tooltips then return end
-    GameTooltip:ClearLines()
-    TotemTimers.PositionTooltip(self)
-	GameTooltip:AddLine("Weapon buffs:")
-    local we = TotemTimers.WeaponEnchants
-	local enchant, expiration, _, mainID, offenchant, offExpiration, _, offID = GetWeaponEnchantInfo()
-	if enchant and expiration > 0 then
-		local spell, _, icon = GetSpellInfo(we[mainID])
-		if spell then
-			GameTooltip:AddLine("MainHand: |T"..icon..":0|t "..spell)
-    end
-    end
-	if offenchant and offExpiration > 0 then
-		local spell, _, icon = GetSpellInfo(we[offID])
-		if spell then
-			GameTooltip:AddLine("OffHand: |T"..icon..":0|t "..spell)
-		end
-	end
-	GameTooltip:AddLine(" ")
-    local s = self:GetAttribute("spell1")
-    if s and not self:GetAttribute("doublespell1") then
-        local name,_,texture = GetSpellInfo(s)
-        if name ~= nil then
-            text = format(L["Leftclick: %s"], "|T"..texture..":0|t "..name)
-            GameTooltip:AddLine(text,r,g,b,1)
-        end
-    else
-        local ds = self:GetAttribute("ds")
-        if ds then
-            local ds1 = self:GetAttribute("doublespell1")
-            local ds2 = self:GetAttribute("doublespell2")
-			local name,_,texture = GetSpellInfo(ds1)
-			ds1 = "|T"..texture..":0|t "..name
-			name,_,texture = GetSpellInfo(ds2)
-			ds2 = "|T"..texture..":0|t "..name
-            if ds == 2 then ds1, ds2 = ds2, ds1 end
-            if ds1 and ds2 then
-                GameTooltip:AddLine(format(L["Leftclick: %s"], ds1),r,g,b,1)
-                GameTooltip:AddLine(format(L["Next Leftclick: %s"], ds2),r,g,b,1)
-            end
-        end
-    end
-	GameTooltip:AddLine(L["Ctrl-Leftclick remove MainHand buff"],r,g,b,1)
-	GameTooltip:AddLine(L["Ctrl-Rightclick remove OffHand buff"],r,g,b,1)
     GameTooltip:Show()
 end
-

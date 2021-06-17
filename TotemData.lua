@@ -276,7 +276,11 @@ TotemData = {
     },
 
 }
-
+local TotemCount = {}
+for k,v in pairs(TotemData) do
+    TotemCount[v.element] = (TotemCount[v.element] or 0) + 1
+end
+TotemTimers.TotemCount = TotemCount
 
 local amtp = {
 	[30708] = 30706,
@@ -398,6 +402,7 @@ TotemTimers.WeaponEnchants = {
     [3783] = SpellIDs.FrostbrandWeapon,
     [3784] = SpellIDs.FrostbrandWeapon,
 }
+
 for i = 3018, 3044 do TotemTimers.WeaponEnchants[i] = SpellIDs.RockbiterWeapon end
 
 function TotemTimers.GetMaxRank(spell)

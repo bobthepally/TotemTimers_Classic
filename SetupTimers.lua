@@ -83,14 +83,8 @@ function TotemTimers.CreateTimers()
         tt.button.HideTooltip = function(self)
             GameTooltip:Hide()
         end
-		tt.button:SetAttribute("_onenter", [[ control:CallMethod("ShowTooltip")
-                                              if self:GetAttribute("OpenMenu") == "mouseover" then
-                                                  control:ChildUpdate("show", true)
-                                              end ]])
-		tt.button:SetAttribute("_onleave", [[ control:CallMethod("HideTooltip")]])
-		tt.button:SetAttribute("_onattributechanged", [[ if name=="hide" then
-                                                             control:ChildUpdate("show", false)
-                                                         elseif name == "*spell1" then 
+
+        tt.button:SetAttribute("_onattributechanged", [[ if name == "*spell1" then
                                                             control:CallMethod("UpdateMiniIconAndProfile")
                                                          elseif name == "state-invehicle" then
                                                             if value == "show" and self:GetAttribute("active") then
@@ -101,16 +95,10 @@ function TotemTimers.CreateTimers()
                                                                 self:Hide()
                                                             end
                                                          end]])
-        tt.button:WrapScript(tt.button, "OnClick", [[ if (button == self:GetAttribute("OpenMenu")
-                                                        or (button == "Button4")) then
-                                                          local open = self:GetAttribute("open")
-                                                          control:ChildUpdate("show", not open)
-														  self:SetAttribute("open", not open)
-                                                      elseif button == "close" or button == "Button5" then
-                                                          control:ChildUpdate("show", false)
-                                                          self:SetAttribute("open", false)
-                                                      end
-                                                       ]])
+        tt.button:WrapScript(tt.button, "OnClick", [[ if button == "Button4" then
+                                                          control:ChildUpdate("toggle")
+                                                      end ]])
+
         tt.Activate = function(self)
             local activeProfile = TotemTimers.ActiveProfile
 
@@ -136,9 +124,9 @@ function TotemTimers.CreateTimers()
                     end
                 end
             end
-
-			if not activeProfile.LastTotems[self.nr] or 
-			  (not AvailableSpells[activeProfile.LastTotems[self.nr]] and not AvailableSpells[NameToSpellID[activeProfile.LastTotems[self.nr]]]) then
+			local lastSpell = string.gsub(activeProfile.LastTotems[self.nr], "%(.+%)$", "")
+			if not lastSpell or 
+			  (not AvailableSpells[lastSpell] and not AvailableSpells[NameToSpellID[lastSpell]]) then
 				local save = activeProfile.LastTotems[self.nr]
 				--[[ when switching specs this part gets executed several times, once for switching and then for each talent (because of events fired)
 				--	so totems from talents are sometimes not available at this point.
@@ -282,9 +270,9 @@ function TotemTimers.CreateTimers()
             if not InCombatLockdown() then
                 TotemTimers.PositionCastButtons()
             end
-            if not InCombatLockdown() then
+            --[[]if not InCombatLockdown() then
                 self:SetAttribute("hide", true)
-            end
+            end]]
             end)
 			            
         local frame = CreateFrame("Frame", nil, tt.button)
@@ -298,7 +286,7 @@ function TotemTimers.CreateTimers()
         playerRange:SetTexture("Interface\\AddOns\\TotemTimers\\dot");
         playerRange:SetSize(7, 7)
         playerRange:SetPoint("TOPLEFT", tt.button, "TOPLEFT", 1, -1);
-        playerRange:SetVertexColor(0.68,0.1,0.12)
+        playerRange:SetVertexColor(1,0,0)
         playerRange:Hide()
 
         tt.button.partyRange = {}
@@ -418,9 +406,9 @@ function TotemTimers:TotemEvent(event, arg1, arg2, arg3, ...)
         self.timer.stopQuiet = true
         self.timer:Stop(1)
         --self.rangeCount:SetText("")
-    elseif event == "UNIT_SPELLCAST_SUCCEEDED" and self.timer.nr == 3 and arg3 == 24854 then
+ --   elseif event == "UNIT_SPELLCAST_SUCCEEDED" and self.timer.nr == 3 and arg3 == 24854 then
         --SpellIDs.EnamoredWaterSpirit
-        self.timer:Start(1, 24, 24)
+ --       self.timer:Start(1, 24, 24)
  --   elseif event == "GROUP_ROSTER_UPDATE" then
  --       TotemTimers.UpdateParty()
  --   elseif event == "CHAT_MSG_ADDON" and self.timer.timers[1] > 0 and arg1 == "WF_STATUS" then
@@ -480,13 +468,7 @@ local BarMiniIconPos = {
     ["vertical"] = { { "TOPRIGHT", "TOPLEFT" }, { "RIGHT", "LEFT" }, { "BOTTOMRIGHT", "BOTTOMLEFT" }, },
 }
 
-function TotemTimers.CreateCastButtons()
-    for i = 1, 4 do
-        TTActionBars:new(8, XiTimers.timers[i].button, _G["TotemTimers_CastBar" .. i], TotemTimersFrame)
-        for j = 1, 8 do
-            local button = _G["TT_ActionButton" .. i .. j]
-            XiTimers.timers[i].button:SetFrameRef("f" .. j, button)
-            button.ChangeTotemOrder = function(self, _, _, totem1)
+function TotemTimers.ChangeTotemOrder(self, _, _, totem1)
                 if InCombatLockdown() then
                     return
                 end
@@ -515,6 +497,19 @@ function TotemTimers.CreateCastButtons()
                     end
                 end
 				
+
+local TotemCount = TotemTimers.TotemCount
+
+function TotemTimers.CreateCastButtons()
+    for i = 1, 4 do
+        local timer = XiTimers.timers[i]
+        local totemCount = TotemCount[timer.nr]
+        local actionBar = TTActionBars:new(totemCount, timer.button, _G["TotemTimers_CastBar" .. i], TotemTimersFrame)
+        timer.actionBar = actionBar
+        for j = 1, totemCount do
+            local button = timer.actionBar.buttons[j]
+            button.ChangeTotemOrder = TotemTimers.ChangeTotemOrder
+
 			button:SetAttribute("SpellIDs", TotemTimers.NameToSpellID)
 
             button:SetAttribute("_ondragstart", [[if IsShiftKeyDown() and self:GetAttribute("*spell1")~=0 then
@@ -597,7 +592,7 @@ function TotemTimers.SetCastButtonSpells()
     end
 end
 
-TotemTimers.partyGUIDs = {}
+
 
 local TotemWeaponEnchants = TotemTimers.WEMapToProvider
 
@@ -657,9 +652,12 @@ TotemTimers.UpdateParty = function()
         local unit = "party"..i
         if UnitExists(unit) then
             local class = select(2, UnitClass(unit))
+            if class and RAID_CLASS_COLORS[class] then
+
             for element = 1,4 do
                 XiTimers.timers[element].button.partyRange[i]:SetVertexColor(RAID_CLASS_COLORS[class]:GetRGB())
             end
+			end
         else
             for element = 1,4 do XiTimers.timers[element].button.partyRange[i]:Hide() end
         end
