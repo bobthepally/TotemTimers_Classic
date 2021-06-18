@@ -641,7 +641,7 @@ SettingsFunctions = {
             end
         else
             for i = 1,4 do
-                if not checkRaid then Timer[i].button:UnregisterEvent("UNIT_AURA") end
+                if not checkRaid then Timers[i].button:UnregisterEvent("UNIT_AURA") end
                 Timers[i].button.playerRange:Hide()
             end
         end

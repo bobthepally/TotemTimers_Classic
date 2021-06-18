@@ -426,7 +426,7 @@ function TotemTimers.UpdateMacro()
 	--			spell1 = we
 	--		end
 			sequence = "/castsequence [nomod] reset=combat/5  " .. TotemTimers.ActiveProfile.ShieldLeftButton .. ", " .. we
-			if TotemTimers.AvailableTalents.DualWield then sequence = sequence .. "\n/cast [@none,mod] " .. we2 end
+			if TotemTimers.AvailableTalents.DualWield and we2 then sequence = sequence .. "\n/cast [@none,mod] " .. we2 end
 			sequence = sequence .. "\n/use [nomod] 16; [mod] 17\n/click StaticPopup1Button1"
 			local nr = GetMacroIndexByName("TT Buff")
 			if nr == 0 then

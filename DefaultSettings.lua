@@ -99,6 +99,7 @@ TotemTimers.DefaultProfile = {
         WeaponBarDirection = "auto",
         WeaponMenuOnRightclick = false,
         LastWeaponEnchant = TotemTimers.SpellNames[TotemTimers.SpellIDs.RockbiterWeapon],
+		LastWeaponEnchant2 = TotemTimers.SpellNames[TotemTimers.SpellIDs.RockbiterWeapon],
         EarthShieldTracker = true,
         EarthShieldLeftButton = "recast", 
         EarthShieldRightButton = "target",

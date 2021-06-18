@@ -577,12 +577,11 @@ local function SetUnit(unit, button)
         if RAID_CLASS_COLORS[class] then
             button.hotkey:SetTextColor(RAID_CLASS_COLORS[class]:GetRGB())
         end
-	--	_G.DevTools_Dump(class)
+		--_G.DevTools_Dump(class)
 		local t = CLASS_ICON_TCOORDS[class]
-	--	_G.DevTools_Dump(t)
+		--_G.DevTools_Dump(t)
         button.icon:SetTexture("Interface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES")
         button.icon:SetTexCoord(unpack(t))
-		
     else
         MainTankListUpdateFrame:Show()
     end
