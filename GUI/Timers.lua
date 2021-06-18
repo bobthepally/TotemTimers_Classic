@@ -405,7 +405,7 @@ TotemTimers.options.args.timers = {
             get = function(info) return TotemTimers.ActiveProfile.CheckRaidRange end,
         },
         PartyRangePosition = {
-            order = 41,
+            order = 42,
             type = "select",
             name = L["Party Range Position"],
             desc = L["Party Range Position Desc"],
@@ -414,6 +414,14 @@ TotemTimers.options.args.timers = {
                 TotemTimers.ActiveProfile.PartyRangePosition = val  TotemTimers.ProcessSetting("PartyRangePosition")
             end,
             get = function(info) return TotemTimers.ActiveProfile.PartyRangePosition end,
+        },
+        TwistingTimer = {
+            order = 41,
+            type = "toggle",
+            name = L["Twisting Timer"],
+            desc = string.format(L["Shows twisting timer fpr %s"], select(1, GetSpellInfo(TotemTimers.SpellIDs.Windfury))),
+            set = function(info, val) TotemTimers.ActiveProfile.TwistingTimer = val  TotemTimers.ProcessSetting("TwistingTimer") end,
+            get = function(info) return TotemTimers.ActiveProfile.TwistingTimer end,
         },
  --[[       RaidRange = {
             order = 40,

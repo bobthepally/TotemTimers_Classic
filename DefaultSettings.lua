@@ -25,12 +25,12 @@ TotemTimers.DefaultProfile = {
     --General            
         Lock = false,
         FlashRed = true,
-        ShowTimerBars = true,
+        --ShowTimerBars = true,
         HideBlizzTimers = true,
         Tooltips = true,
         TooltipsAtButtons = true,
         TimeFont = "Friz Quadrata TT",
-        TimeColor = {r=1,g=1,b=1},
+        TimeColor = {r=1,g=1,b=1,a=1},
         TimerBarTexture = "Blizzard",
         TimerBarColor = {r=0.5,g=0.5,b=1.0,a=1.0},
         ShowKeybinds = true,
@@ -84,6 +84,7 @@ TotemTimers.DefaultProfile = {
         Timer_Clickthrough = false,
         IncludeInMacro = {[1] = true, [2] = true, [3] = true, [4] = true,},
         MacroReset = 15,
+        TwistingTimer = false,
         
     --Trackers
         TrackerArrange = "horizontal",
@@ -444,6 +445,10 @@ function TotemTimers.UpdateProfiles()
         end
 	end
 	for _,profile in pairs(TotemTimers_Profiles) do
+	    if profile.ShowTimerBars == false then
+	        profile.TimerBarColor.a = 0
+	    end
+	    profile.ShowTimerBars = nil
 		for i,j in pairs(TotemTimers.DefaultProfile.FramePositions) do
 			if not profile.FramePositions[i] then
 				profile.FramePositions[i] = copy(j)
@@ -529,7 +534,7 @@ end
 
 
 local GeneralList = {
-    Lock, FlashRed, ShowTimerBars,
+    Lock, FlashRed, --ShowTimerBars,
     HideBlizzTimers, Tooltips, TooltipsAtButtons,
     TimeFont, TimeColor, TimerBarTexture,
     TimerBarColor, ShowKeybinds, HideInVehicle,
@@ -545,7 +550,7 @@ end
 
 
 local TimerList = {
-    Show, Order, Arrange, TimeStyle,
+    Show, Order, Arrange, TimeStyle, InActiveOpacity,
     TimerTimePos, CastBarDirection, TimerSize, TimerTimeHeight,
     TimerSpacing, TimerTimeSpacing, TotemTimerBarWidth, TotemMenuSpacing,
     OpenOnRightclick, MenusAlwaysVisible, BarBindings, ReverseBarBindings,

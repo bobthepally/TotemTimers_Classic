@@ -169,7 +169,7 @@ function XiTimers:new(nroftimers, unclickable)
 	end
     
     
-    self.timeColor = {r=1,g=1,b=1}
+    self.timeColor = {r=1,g=1,b=1,a=1}
 	self.button.icons[1]:Show()
 	self.timerBarPos = "BOTTOM"
 	self.timeSpacing = 0
@@ -271,7 +271,7 @@ function XiTimers:Update(elapsed)
 					else 
 						SetButtonTime(button.time, timers[1], self.timeStyle)
 					end
-					if self.visibleTimerBars and (not self.timerOnButton or self.forceBar or i>1) then
+					if not self.timerOnButton or self.forceBar or i>1 then
 						self.timerBars[i]:SetValue(timers[i])
 					end
 				end
@@ -302,6 +302,12 @@ function XiTimers:Update(elapsed)
     if self.barTimer > 0 then
         self.barTimer = self.barTimer - elapsed
         button.bar:SetValue(self.barTimer)        
+		local red = button.bar:GetStatusBarColor()
+		if self.barTimer <= 3 and red == 0 then
+			button.bar:SetStatusBarColor(1, 0, 0, 0.7)
+		elseif  self.barTimer > 3 and red ~= 0 then
+			button.bar:SetStatusBarColor(0, 0.8, 0, 0.7)	
+		end
     end 
 end
 
@@ -354,7 +360,7 @@ function XiTimers:Start(timer, time, duration)
         self:HideTimerBar(timer)
     end        
         
-        if self.visibleTimerBars and timer>1 then
+        if timer>1 then
 		timerbar:SetValue(time)
 	end
 			else 
@@ -413,9 +419,7 @@ function XiTimers:Stop(timer)
 
 	self.button.rangeCount:SetText("")
 -- /LaYt]]
-	if self.visibleTimerBars then		
 		timerbar:SetValue(0)
-	end
     self:HideTimerBar(timer)
     if timer == 1 then
         self.button.time:Hide()
@@ -438,9 +442,9 @@ function XiTimers:ShowTimer()
         if not self.timerOnButton or self.forceBar then
             self.button.time:Hide()
             self:ShowTimerBar(1)
-            if self.visibleTimerBars then self.timerBars[1]:SetValue(self.timers[1]) end
+            self.timerBars[1]:SetValue(self.timers[1])
         else
-            self.button.time:SetTextColor(self.timeColor.r, self.timeColor.g, self.timeColor.b, 1)
+            self.button.time:SetTextColor(self.timeColor.r, self.timeColor.g, self.timeColor.b, self.timeColor.a)
             self:HideTimerBar(1)
             self.button.time:Show()
             SetButtonTime(self.button.time, self.timers[1], nil)
@@ -455,7 +459,7 @@ end
 function XiTimers:StartBarTimer(time, duration)
     self.barDuration = duration or time
     self.barTimer = time
-    self.button.bar:SetMinMaxValues(0, duration)
+    self.button.bar:SetMinMaxValues(0, self.barDuration)
     self.button.bar:SetValue(time)
     self.button.bar:Show()
 end
@@ -525,11 +529,9 @@ end
 
 function XiTimers:ShowTimerBar(nr)
     self.timerBars[nr]:Show()
-	if self.visibleTimerBars then
         self.timerBars[nr].background:Show()
         self.timerBars[nr].background:SetValue(1)
     end
-end
 
 -- display functions
 
@@ -749,10 +751,11 @@ function XiTimers:SetBarTexture(texture)
     end
 end
 
-function XiTimers:SetBarColor(r,g,b)
+function XiTimers:SetBarColor(r,g,b,a)
+    local backgroundAlpha = math.max(0, a - 0.6)
     for _,bar in pairs(self.timerBars) do 
-		bar:SetStatusBarColor(r,g,b, 1.0)
-        bar.background:SetStatusBarColor(r,g,b,0.4)
+		bar:SetStatusBarColor(r,g,b,a)
+        bar.background:SetStatusBarColor(r,g,b,backgroundAlpha)
     end
 end
 

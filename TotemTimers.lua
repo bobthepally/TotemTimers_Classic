@@ -465,18 +465,24 @@ end
 TotemTimers.onWF_STATUS = function(pfx, msg, ch, src, tgt, ...) 
     local tGUID, tID, tExpire, tLag, tExtra = strsplit(':', msg)
     local pty = TotemTimers.party
-
-	
-	
+	local WFtimer = XiTimers.timers[TotemTimers.ActiveProfile.Order[AIR_TOTEM_SLOT]]
+	local TotemWeaponEnchants = TotemTimers.WEMapToProvider
 	if tID == 'nil' then tID = -1 end
 	tID = tonumber(tID)
 	if tExpire == 'nil' then tExpire = -1 end
-	tExpire = tonumber(tExpire) - (tonumber(tLag) / 1000)
+	local playerLag =  0 --select(3, GetNetStats())
+	tLag = playerLag + tonumber(tLag)
+	tExpire = time() + (tonumber(tExpire) - tLag ) / 1000
 	for t = 1,4 do
 		if not pty[t] then pty[t] = {} end
 		if UnitGUID('party'..t) and tGUID == UnitGUID('party'..t) then
 			pty[t].tID = tID
 			pty[t].tExpire = tExpire 
+			pty[t].tLag = tLag / 1000
+			if TotemWeaponEnchants[tID] == TotemTimers.SpellIDs.Windfury then
+				UpdatePartyRange(WFtimer,'party'..t)
+			end
+			break
 		end
 	end
 end

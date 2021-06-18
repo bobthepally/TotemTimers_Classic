@@ -44,7 +44,7 @@ local Cooldowns = {
     },
 }
 
-local UpdatePartyRange
+UpdatePartyRange = function() end
 
 
 
@@ -173,7 +173,7 @@ function TotemTimers.CreateTimers()
 			self.timeElapsed = self.timeElapsed + elapsed
 			if (self.timeElapsed > 0.2) then
 				self.timeElapsed = 0
-				if self.timers[1] > 0 and (self.totemRange or self.activeTotem == 8512 or  self.activeTotem == 8227)  then -- windfury $ Flametongue
+				if self.timers[1] > 0 and (self.totemRange or self.activeTotem == SpellIDs.Windfury or  self.activeTotem == SpellIDs.Flametongue)  then 
 					if TotemTimers.ActiveProfile.CheckPlayerRange  then
 						UpdatePartyRange(self, "player")
 					end
@@ -347,6 +347,9 @@ function TotemTimers:TotemEvent(event, arg1, arg2, arg3, ...)
 				self.timer.warningPoint = TotemData[totem].warningPoint or 10
                 self.timer:Start(1, startTime + duration - GetTime())
                 self.timer.totemPositionX, self.timer.totemPositionY = HBD:GetPlayerWorldPosition()
+                if self.timer.twisting and totem == SpellIDs.Windfury then
+                    self.timer:StartBarTimer(10.3)
+                end
                 --TotemTimers.SetTotemPosition(self.element)
                 --[[ TotemTimers.ResetRange(self.element)
                 self.timer:SetOutOfRange(false)
@@ -408,13 +411,24 @@ function TotemTimers:TotemEvent(event, arg1, arg2, arg3, ...)
         --self.rangeCount:SetText("")
  --   elseif event == "UNIT_SPELLCAST_SUCCEEDED" and self.timer.nr == 3 and arg3 == 24854 then
         --SpellIDs.EnamoredWaterSpirit
- --       self.timer:Start(1, 24, 24)
- --   elseif event == "GROUP_ROSTER_UPDATE" then
- --       TotemTimers.UpdateParty()
- --   elseif event == "CHAT_MSG_ADDON" and self.timer.timers[1] > 0 and arg1 == "WF_STATUS" then
-		
- --       local guid, enchantID = strsplit(':', arg2)
- --       UpdatePartyRange(self.timer, nil, guid, tonumber(enchantID))
+--        self.timer:Start(1, 24, 24)]]
+--[[    elseif event == "GROUP_ROSTER_UPDATE" then
+        TotemTimers.UpdateParty()
+    elseif event == "CHAT_MSG_ADDON" and self.timer.timers[1] > 0 and arg1 == "WF_STATUS" then
+        local guid, enchantID, duration, lag = strsplit(':', arg2)
+        if self.timer.twisting and duration then
+            duration = tonumber(duration)
+            if duration and duration > 0 then
+                local playerLag = select(3, GetNetStats())
+                duration = (duration - lag - playerLag) / 1000
+            else
+                duration = 0
+            end
+        else
+            duration = 0
+        end
+        UpdatePartyRange(self.timer, nil, guid, tonumber(enchantID), duration)
+]]
     end
 end
 
@@ -608,11 +622,16 @@ UpdatePartyRange = function(timer, unit) --, unitGUID, enchantID)
     else
         rangeDot = timer.button.partyRange[tonumber(strsub(unit, -1))]
     end
-	if (timer.activeTotem == 8512 or  timer.activeTotem == 8227) then
+	if (timer.activeTotem == SpellIDs.Windfury or  timer.activeTotem == SpellIDs.Flametongue) then
 		if unit ~= "player" then
 			local pty = TotemTimers.party[tonumber(strsub(unit, -1))]
-			if pty and pty.tID and TotemWeaponEnchants[pty.tID] ==  timer.activeTotem and pty.tExpire > 1000 then
+			if pty and pty.tID and TotemWeaponEnchants[pty.tID] ==  timer.activeTotem  then
+				local duration = pty.tExpire - time()
 				inRange = true
+				if timer.twisting and duration > pty.tLag 
+					and timer.barTimer > 0 and math.abs(duration - timer.barTimer) > 1 then
+					timer.barTimer = duration
+				end
 			end
 		else
 			inRange = true
