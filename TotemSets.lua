@@ -18,9 +18,12 @@ local buttonlocations = {
 	{"BOTTOMRIGHT", "TOPLEFT"},
 }
 
+local ankh = nil
+
 function TotemTimers.InitSetButtons()
     ankh = XiTimers.timers[5].button 
     ankh:SetScript("OnClick", TotemTimers.SetAnchor_OnClick)
+    if not ankh.buttons then  ankh.buttons = {} end
     TotemTimers.ProgramSetButtons()
     ankh:WrapScript(XiTimers.timers[5].button, "OnClick",
                                                             [[ if button == "LeftButton" then
@@ -43,13 +46,14 @@ function TotemTimers.InitSetButtons()
 end
 
 function TotemTimers.ProgramSetButtons()
+    ankh = XiTimers.timers[5].button
     local Sets = TotemTimers.ActiveProfile.TotemSets
 	local nr = 0
-	local lastButton = XiTimers.timers[5].button --LaYt
+--	local lastButton = ankh --LaYt
 	for i=1,8 do
         local b = _G["TotemTimers_SetButton"..i]
         if not b then
-            b = CreateFrame("Button", "TotemTimers_SetButton"..i, XiTimers.timers[5].button, "TotemTimers_SetButtonTemplate")
+            b = CreateFrame("Button", "TotemTimers_SetButton"..i, ankh, "TotemTimers_SetButtonTemplate")
             b:SetAttribute("_childupdate-show", [[ if message and not self:GetAttribute("inactive") then self:Show() else self:Hide() end ]])
             b:SetAttribute("_childupdate-toggle", [[ if not self:GetAttribute("inactive") then if self:IsVisible() then self:Hide() else self:Show() end end ]])
             b:SetAttribute("_onleave", [[ control:CallMethod("HideTooltip")  ]]) 
@@ -58,18 +62,19 @@ function TotemTimers.ProgramSetButtons()
             b.HideTooltip = TotemTimers.HideTooltip
             b.ShowTooltip = TotemTimers.SetButtonTooltip
             b:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-            b:SetParent(XiTimers.timers[5].button)
+            b:SetParent(ankh)
+            table.insert(ankh.buttons,b)
         end
-        b:ClearAllPoints()
+--[[        b:ClearAllPoints()
         --b:SetPoint(buttonlocations[i][1], lastButton, buttonlocations[i][2])
 		b:SetPoint("BOTTOM", lastButton, "TOP") --LaYt
         lastButton = b
+]] 
         if Sets[i] then
             for k = 1,4 do
                 local icon = _G[b:GetName().."Icon"..k]
                 if type(Sets[i][k]) == "string" or Sets[i][k] > 0 then
-                    local _,_,texture = GetSpellInfo(Sets[i][k])				
-                    icon:SetTexture(texture)
+                    icon:SetTexture(GetSpellTexture(Sets[i][k]))
                 end     
             end
             b:SetAttribute("inactive", false)            
@@ -92,6 +97,7 @@ function TotemTimers.SetAnchor_OnClick(self, button)
 			set[nr] = spell
 		end
         table.insert(TotemTimers.ActiveProfile.TotemSets, set)
+		self:Execute([[ owner:ChildUpdate("show", false) ]])
 		TotemTimers.ProgramSetButtons()
     end
 end
@@ -129,3 +135,65 @@ StaticPopupDialogs["TOTEMTIMERS_DELETESET"] = {
   timeout = 0,
   OnAccept = TotemTimers_DeleteSet,
 }
+local CastButtonPositions = {
+	["horizontal"] = {
+		["up"] = {"BOTTOM", "TOP", "BOTTOM", "TOP"},["down"]={"TOP", "BOTTOM", "TOP", "BOTTOM"},
+	},
+	["vertical"] = {
+		["left"] = {"RIGHT", "LEFT", "RIGHT", "LEFT"},["right"]={"LEFT", "RIGHT", "LEFT", "RIGHT"},
+		
+	},
+    ["free"] = {
+ 		["left"] = {"RIGHT", "LEFT", "RIGHT", "LEFT"},["right"]={"LEFT", "RIGHT", "LEFT", "RIGHT"},
+		["up"] = {"BOTTOM", "TOP", "BOTTOM", "TOP"},["down"]={"TOP", "BOTTOM", "TOP", "BOTTOM"},
+   },
+}
+CastButtonPositions.horizontal.left = CastButtonPositions.horizontal.up
+CastButtonPositions.horizontal.right = CastButtonPositions.horizontal.up
+CastButtonPositions.vertical.up = CastButtonPositions.vertical.right
+CastButtonPositions.vertical.down = CastButtonPositions.vertical.right
+
+TotemTimers.CalcSMenuDirection = function(dir, parentdir, freenotself)
+    if dir == "auto" then
+        local p,_,_,x,y = TotemTimers_TrackerFrame:GetPoint()
+        if parentdir == "free" and not freenotself then p,_,_,x,y = XiTimers.timers[5].button:GetPoint() end
+        if not p then return "up" end
+		if parentdir == "horizontal" then
+            if ((p == "LEFT" or p == "RIGHT" or p == "CENTER") and y < 0)
+              or (string.sub(p,1,6) == "BOTTOM") then
+				dir = "up"
+			else
+				dir = "down"
+			end
+		else
+			if ((p == "TOP" or p == "BOTTOM" or p == "CENTER") and x < 0)
+              or (string.find(p,"LEFT")) then
+				dir = "right"
+			else
+				dir = "left"
+			end
+		end
+    end
+    return dir
+end
+
+TotemTimers.SetSMenuDirection = function(dir, parentdir, freenotself)
+    local self = XiTimers.timers[5].button
+	self.direction = dir
+    self.parentdirection = parentdir
+    dir = TotemTimers.CalcSMenuDirection(dir, parentdir, freenotself)
+    self.actualDirection = dir
+    local x = 0
+    local y = 0
+    local anchor = self
+    for i = 1, 8 do
+		local button = self.buttons[i]
+		button:ClearAllPoints()
+		if i==1 then
+			button:SetPoint(CastButtonPositions[parentdir][dir][1], anchor, CastButtonPositions[parentdir][dir][2])
+		else
+			button:SetPoint(CastButtonPositions[parentdir][dir][3], self.buttons[i-1], CastButtonPositions[parentdir][dir][4],x,y)
+		end
+        button:SetFrameStrata("HIGH")
+    end
+end

@@ -41,6 +41,12 @@ local function splitString(ustring)
     return s
 end
 
+local function AfterDrag()
+	TotemTimers.ProcessSetting("SetsBarDirection")
+	TotemTimers.ProcessSetting("ESMainTankMenuDirection")
+	TotemTimers.ProcessSetting("WeaponBarDirection")
+end
+
 function TotemTimers.CreateTrackers()
 	-- ankh tracker
     ankh = XiTimers:new(1)
@@ -61,17 +67,22 @@ function TotemTimers.CreateTrackers()
         XiTimers.Activate(self) 
         TotemTimers.AnkhEvent(ankh.button, "SPELL_UPDATE_COOLDOWN")
         TotemTimers.AnkhEvent(ankh.button, "BAG_UPDATE")
-        TotemTimers.ProcessSetting("TimerSize")
+        --TotemTimers.ProcessSetting("TimerSize")
     end
 	ankh.button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     ankh.Deactivate = function(self)
         XiTimers.Deactivate(self)
-        TotemTimers.ProcessSetting("TimerSize")
+        --TotemTimers.ProcessSetting("TimerSize")
     end
     ankh.button.cooldown.noCooldownCount = true
     ankh.button.cooldown.noOCC = true
     ankh.button:SetScript("OnDragStop", function(self)
         XiTimers.StopMoving(self)
+	    if TotemTimers.ActiveProfile.TrackerArrange == "free" then
+			TotemTimers.ProcessSetting("SetsBarDirection")
+		else
+			AfterDrag()
+		end
     end)
 		
 	shield.button.icons[1]:SetTexture(SpellTextures[SpellIDs.LightningShield])
@@ -187,7 +198,11 @@ function TotemTimers.CreateTrackers()
 
     earthshieldTimer.button:SetScript("OnDragStop", function(self)
         XiTimers.StopMoving(self)
+		if TotemTimers.ActiveProfile.TrackerArrange == "free" then
         TotemTimers.ProcessSetting("ESMainTankMenuDirection")
+		else
+			AfterDrag()
+		end
         if not InCombatLockdown() then
             earthshieldTimer.button:SetAttribute("hide", true)
         end
@@ -197,16 +212,22 @@ function TotemTimers.CreateTrackers()
 
 
     weapon.button.icons[1]:SetTexture(SpellTextures[SpellIDs.RockbiterWeapon])
-    if TotemTimers.ActiveProfile.LastWeaponEnchant == 5 or TotemTimers.ActiveProfile.LastWeaponEnchant == 6 then
-        weapon.button.icons[1]:SetTexture(SpellTextures[SpellIDs.WindfuryWeapon])
-        weapon.button.icons[2]:SetTexture(SpellTextures[TotemTimers.ActiveProfile.LastWeaponEnchant == 5 and SpellIDs.FlametongueWeapon or SpellIDs.FrostbrandWeapon])
-    else
+--    if TotemTimers.ActiveProfile.LastWeaponEnchant == 5 or TotemTimers.ActiveProfile.LastWeaponEnchant == 6 then
+--        weapon.button.icons[1]:SetTexture(SpellTextures[SpellIDs.WindfuryWeapon])
+--        weapon.button.icons[2]:SetTexture(SpellTextures[TotemTimers.ActiveProfile.LastWeaponEnchant == 5 and SpellIDs.FlametongueWeapon or SpellIDs.FrostbrandWeapon])
+--    else
         if TotemTimers.ActiveProfile.LastWeaponEnchant then
-            local texture = SpellTextures[TotemTimers.NameToSpellID[TotemTimers.ActiveProfile.LastWeaponEnchant]]
+            local texture = SpellTextures[TotemTimers.NameToSpellID[TotemTimers.StripRank(TotemTimers.ActiveProfile.LastWeaponEnchant)]]
             weapon.button.icons[1]:SetTexture(texture)
-            weapon.button.icons[2]:SetTexture(texture)
+            
         end
-    end
+		if TotemTimers.ActiveProfile.LastWeaponEnchant2 then
+            local texture = SpellTextures[TotemTimers.NameToSpellID[TotemTimers.StripRank(TotemTimers.ActiveProfile.LastWeaponEnchant2)]]
+            weapon.button.icons[2]:SetTexture(texture)
+            
+        end
+		
+--    end
     weapon.button.anchorframe = TotemTimers_TrackerFrame
     weapon.timeStyle = "blizz"
     weapon.button:SetAttribute("*type*", "spell")
@@ -278,7 +299,11 @@ function TotemTimers.CreateTrackers()
         if not InCombatLockdown() then
             --self:SetAttribute("hide", true)
         end
+		if TotemTimers.ActiveProfile.TrackerArrange == "free" then
         TotemTimers.ProcessSetting("WeaponBarDirection")
+		else
+			AfterDrag()
+		end
     end)
     weapon.nobars = true
     weapon.Stop = function(self, timer)

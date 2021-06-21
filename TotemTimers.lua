@@ -115,6 +115,7 @@ function TotemTimers.SetupGlobals()
         -- TotemTimers.CreateEnhanceCDs()
         -- TotemTimers.CreateCrowdControl()
 		-- TotemTimers.CreateLongCooldowns()
+        TotemTimers.InitSetButtons()
         
         TotemTimers.ProcessAllSettings()
         
@@ -122,9 +123,6 @@ function TotemTimers.SetupGlobals()
 		--TotemTimers_OrderTrackers()
 		TotemTimersFrame:Show()
         
-        TotemTimers.InitSetButtons()
-		
-	
 		--set the slashcommand
 		SLASH_TOTEMTIMERS1 = "/totemtimers";
 		SLASH_TOTEMTIMERS2 = "/tt";

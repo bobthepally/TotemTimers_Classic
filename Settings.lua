@@ -582,7 +582,11 @@ SettingsFunctions = {
         TTActionBars.bars[6]:SetDirection(value, TotemTimers.ActiveProfile.TrackerArrange)
         --if #TTActionBars.bars > 5 then TotemTimers.ProcessSetting("MultiSpellBarDirection") end
     end,
-
+    SetsBarDirection =
+		function(value, Timers)
+			TotemTimers.SetSMenuDirection(value, TotemTimers.ActiveProfile.TrackerArrange)
+			--if #TTActionBars.bars > 5 then TotemTimers.ProcessSetting("MultiSpellBarDirection") end
+		end,
     WeaponMenuOnRightclick =
     function(value, Timers)
         if value then

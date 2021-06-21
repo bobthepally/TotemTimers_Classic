@@ -129,6 +129,24 @@ TotemTimers.options.args.trackers = {
                             set = function(info, val) TotemTimers.ActiveProfile.AnkhTracker = val  TotemTimers.ProcessSetting("AnkhTracker") end,
                             get = function(info) return TotemTimers.ActiveProfile.AnkhTracker end,
                         },  
+                        menudirection = {
+                            order = 5,
+                            type = "select",
+                            name = L["Menu Direction"],
+                            values = function()
+                                if TotemTimers.ActiveProfile.TrackerArrange == "horizontal" then
+                                    return {auto=L["Automatic"], up=L["Up"], down=L["Down"],}
+                                elseif TotemTimers.ActiveProfile.TrackerArrange == "vertical" then
+                                    return {auto=L["Automatic"], left=L["Left"], right=L["Right"],}
+                                else
+                                    return {auto=L["Automatic"], left=L["Left"], right=L["Right"], up=L["Up"], down=L["Down"], box = L["Box"]}
+                                end
+                            end,
+                            set = function(info, val)
+                                TotemTimers.ActiveProfile.SetsBarDirection = val  TotemTimers.ProcessSetting("SetsBarDirection")
+                            end,
+                            get = function(info) return TotemTimers.ActiveProfile.SetsBarDirection end,
+                        },						
                     },
                 },
                 shield = {

@@ -100,6 +100,7 @@ function TotemTimers.CreateTimers()
                                                       end ]])
 
         tt.Activate = function(self)
+            if self.active then return end
             local activeProfile = TotemTimers.ActiveProfile
 
             XiTimers.Activate(self)
@@ -124,10 +125,9 @@ function TotemTimers.CreateTimers()
                     end
                 end
             end
-			local lastSpell = string.gsub(activeProfile.LastTotems[self.nr], "%(.+%)$", "")
+			local lastSpell = TotemTimers.StripRank(activeProfile.LastTotems[self.nr])
 			if not lastSpell or 
 			  (not AvailableSpells[lastSpell] and not AvailableSpells[NameToSpellID[lastSpell]]) then
-				local save = activeProfile.LastTotems[self.nr]
 				--[[ when switching specs this part gets executed several times, once for switching and then for each talent (because of events fired)
 				--	so totems from talents are sometimes not available at this point.
 				--	lasttotem is saved and restored if not nil so that talent totems aren't replaced when switching specs 
@@ -140,10 +140,10 @@ function TotemTimers.CreateTimers()
 					end
 				end
 				-- restore saved totem if not nil
-				activeProfile.LastTotems[self.nr] = save or activeProfile.LastTotems[self.nr]
+				activeProfile.LastTotems[self.nr] = lastSpell or activeProfile.LastTotems[self.nr]
 			else
-				self.button:SetAttribute("*spell1", activeProfile.LastTotems[self.nr])
-				self.button.icon:SetTexture(GetSpellTexture(activeProfile.LastTotems[self.nr]))
+				self.button:SetAttribute("*spell1", lastSpell)
+				self.button.icon:SetTexture(GetSpellTexture(lastSpell))
 			end
         end
 

@@ -99,6 +99,7 @@ TotemTimers.DefaultProfile = {
         AnkhTracker = true,
         ShieldTracker = true,
         WeaponTracker = true,
+        SetsBarDirection = "auto",
         WeaponBarDirection = "auto",
         WeaponMenuOnRightclick = false,
         LastWeaponEnchant = TotemTimers.SpellNames[TotemTimers.SpellIDs.RockbiterWeapon],
@@ -573,7 +574,7 @@ local TrackerList = {
     EarthShieldLeftButton, EarthShieldRightButton, EarthShieldMiddleButton,
     EarthShieldButton4, ShieldLeftButton, ShieldRightButton, ShieldMiddleButton,
     EarthShieldTargetName, ESMainTankMenu, ESMainTankMenuDirection, ESChargesOnly,
-    Tracker_Clickthrough, WeaponTracker, WeaponBarDirection,
+    Tracker_Clickthrough, WeaponTracker, WeaponBarDirection, SetsBarDirection,
     WeaponMenuOnRightclick, LastWeaponEnchant,
 }
 
