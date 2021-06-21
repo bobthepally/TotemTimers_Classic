@@ -416,17 +416,33 @@ TotemTimers.WeaponEnchants = {
 
 for i = 3018, 3044 do TotemTimers.WeaponEnchants[i] = SpellIDs.RockbiterWeapon end
 
+local gsub = gsub
+function TotemTimers.StripRank(spell)
+    local stripped = gsub(spell, "%(.*%)", "")
+    return stripped
+end
+
 function TotemTimers.GetMaxRank(spell)
 	local maxspell
+	local mainID
 	if type(spell) == "number" then
 		maxspell = select(1,GetSpellInfo(spell))
+		mainID = spell
 	else
-		maxspell = spell
+		maxspell = TotemTimers.StripRank(spell)
+		mainID = TotemTimers.NameToSpellID[maxspell]
 	end
 	local spellId = select(7, GetSpellInfo(maxspell))
 	local rank = GetSpellSubtext(spellId)
-	if rank then 
+	if rank and rank ~= "" then 
 		maxspell = maxspell .. "(" .. rank ..")"
+		local rankNumber = tonumber(string.match(rank,"(%d)"))
+		if not mainID then
+		elseif not TotemTimers_MaxRanks[mainID] or TotemTimers_MaxRanks[mainID] < rankNumber then
+			TotemTimers_MaxRanks[mainID] = rankNumber
+		else
+			maxspell = string.gsub(maxspell,"(%d)",TotemTimers_MaxRanks[mainID])
+		end
 	end
 	return maxspell
 end

@@ -108,7 +108,7 @@ TotemTimers.options = {
                     desc = L["Hide In Vehicles Desc"],
                     set = function(info, val) TotemTimers.ActiveProfile.HideInVehicle = val TotemTimers.ProcessSetting("HideInVehicle") end,
                     get = function(info) return TotemTimers.ActiveProfile.HideInVehicle end,
-                },                
+                },
                 Keybinds = {
                      order = 11,
                    type = "toggle",

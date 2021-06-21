@@ -361,7 +361,7 @@ function TotemTimers:TotemEvent(event, arg1, arg2, arg3, ...)
             else
                 --[[ TotemTimers.ResetRange(self.element)
                 self.rangeCount:SetText("") --]]
-                if self.timer.timers[1] > 0 then 
+                if self.timer.timers[1] > 0 then
                     self.timer:Stop(1)
                 end
     		end
@@ -397,7 +397,7 @@ function TotemTimers:TotemEvent(event, arg1, arg2, arg3, ...)
                     end
                 elseif self.timer.timers[nr] > 0 then
                     self.timer:Stop(nr)
-                end 
+                end
             end
         else
             for i = 2, self.timer.nrOfTimers do
@@ -509,8 +509,8 @@ function TotemTimers.ChangeTotemOrder(self, _, _, totem1)
                             TotemTimers.SetCastButtonSpells()
                         end
                     end
-                end
-				
+end
+
 
 local TotemCount = TotemTimers.TotemCount
 
@@ -534,26 +534,9 @@ function TotemTimers.CreateCastButtons()
                                                                             return "clear"
                                                                        end]])
         end
---[[		local timer = XiTimers.timers[i].button
-		timer.party = {}
-		for k = 1, 4 do
-			local tex = timer:CreateTexture()
-			tex:SetTexture("Interface\\AddOns\\TotemTimers\\dot")
-			tex:SetSize(7, 7)
-			tex:Hide()
-			timer.party[k] = tex
-		end
-		timer.player = timer:CreateTexture()
-		timer.player:SetTexture("Interface\\AddOns\\TotemTimers\\dot")
-		timer.player:SetSize(7, 7)
-		timer.player:SetPoint("TOPLEFT",timer,"TOPLEFT",3,-3)
-		timer.player:SetVertexColor(1,0,0)
-		timer.player:Hide()
-]]
     end
     TotemTimers.PositionCastButtons()
     TotemTimers.SetCastButtonSpells()
---	TotemTimers.ReorerPartyBuffs()	
 end
 
 local TotemCastPositions = {
@@ -568,7 +551,7 @@ function TotemTimers.PositionCastButtons()
     for i = 1, 4 do
         TTActionBars.bars[i]:SetDirection(Profile.CastBarDirection, Profile.Arrange)
     end
-    
+
     -- and position totem cast buttons
     local pos = Profile.CastButtonPosition
     if Profile.Arrange == "horizontal" then
@@ -580,7 +563,7 @@ function TotemTimers.PositionCastButtons()
                 pos = "BOTTOM"
             end
         end
-    elseif Profile.Arrange == "vertical" then        
+    elseif Profile.Arrange == "vertical" then
         if pos ~= "LEFT" and pos ~= "RIGHT" then
             local dir = TTActionBars.bars[1]:CalcDirection(Profile.CastBarDirection, Profile.Arrange)
             if dir == "left" then
@@ -636,10 +619,11 @@ UpdatePartyRange = function(timer, unit) --, unitGUID, enchantID)
 		else
 			inRange = true
 		end
-	elseif (timer.totemRange) then
+    elseif timer.totemRange then
         local x,y,zone = HBD:GetUnitWorldPosition(unit)
         if (not x or not y) then return end
-        if HBD:GetWorldDistance(zone, timer.totemPositionX, timer.totemPositionY, x, y) < timer.totemRange then
+        local distance = HBD:GetWorldDistance(zone, timer.totemPositionX, timer.totemPositionY, x, y)
+        if not distance or (distance and distance < timer.totemRange) then
             inRange = true
         end
     else
@@ -682,27 +666,3 @@ TotemTimers.UpdateParty = function()
         end
 	end
 end
-
-
---[[
-
-
-local PartyBuffRelatives = {["TOP"] = {"BOTTOMLEFT", "TOPLEFT", "LEFT", "RIGHT",2,0}, ["LEFT"] = {"TOPRIGHT", "TOPLEFT", "TOP", "BOTTOM",0,-2},
-                            ["BOTTOM"] = {"TOPLEFT", "BOTTOMLEFT", "LEFT", "RIGHT",2,0}, ["RIGHT"] = {"TOPLEFT", "TOPRIGHT", "TOP", "BOTTOM",0,-2}}
-
-function TotemTimers.ReorerPartyBuffs()	
-	local side = TotemTimers.ActiveProfile.PartyBuffSide
-	for j=1,4 do
-		local btn = XiTimers.timers[j].button
-		for i=1,4 do
-			btn.party[i]:ClearAllPoints()
-			if i == 1 then
-				btn.party[i]:SetPoint(PartyBuffRelatives[side][1], btn, PartyBuffRelatives[side][2],
-									  PartyBuffRelatives[side][5], PartyBuffRelatives[side][6])
-			else
-				btn.party[i]:SetPoint(PartyBuffRelatives[side][3], btn.party[i-1], PartyBuffRelatives[side][4])
-			end
-		end		
-	end							
-end
-]]

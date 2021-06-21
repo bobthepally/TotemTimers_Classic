@@ -64,11 +64,32 @@ function TotemTimers.LearnedSpell(spell,tab)
 	-- TotemTimers.ProcessSetting("LongCooldowns")
     TotemTimers.ProgramSetButtons()
 end
+local function UpdateRank(button)
+    for i = 1,3 do
+        for _,type in pairs({"*spell", "spell", "doublespell"}) do
+            local spell = button:GetAttribute(type..i)
+            if spell then
+                button:SetAttribute(type..i, TotemTimers.GetMaxRank(spell))
+            end
+        end
+    end
+end
 
+function TotemTimers.UpdateSpellRanks()
+    for _,timer in pairs(XiTimers.timers) do
+        UpdateRank(timer.button)
+        if timer.actionBar then
+            for _,actionButton in pairs(timer.actionBar.buttons) do
+                UpdateRank(actionButton)
+            end
+        end
+    end
+end
 
 function TotemTimers.ChangedTalents()
 	TotemTimers.GetSpells()
     TotemTimers.GetTalents()
     TotemTimers.SelectActiveProfile()
     TotemTimers.ExecuteProfile()
+    TotemTimers.UpdateSpellRanks()
 end

@@ -20,6 +20,8 @@ TotemTimers_Profiles = {
 }
 TotemTimers_GlobalSettings = {}
 
+if not TotemTimers_MaxRanks then TotemTimers_MaxRanks = {} end
+
 TotemTimers.DefaultProfile = {
 
     --General            
@@ -78,7 +80,7 @@ TotemTimers.DefaultProfile = {
 	AffectedPositionX = 4,
 	AffectedPositionY = 4,
         CheckPlayerRange = true,
-        CheckRaidRange = true,	
+        CheckRaidRange = true,
         PartyRangePosition = "TOP",
         ShowRaidRangeTooltip = true,
         Timer_Clickthrough = false,

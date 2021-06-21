@@ -179,10 +179,6 @@ TotemTimers.options.args.timers = {
 				  end,
 			get = function(info) return TotemTimers.ActiveProfile.InActiveOpacity end,
 		},
-		
-		
-		
-		
         timerTimeHeight = {
             order = 19,
             type = "range",

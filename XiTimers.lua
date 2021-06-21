@@ -358,12 +358,12 @@ function XiTimers:Start(timer, time, duration)
         self:ShowTimerBar(timer)
     else
         self:HideTimerBar(timer)
-    end        
-        
+        end
+
         if timer>1 then
 		timerbar:SetValue(time)
 	end
-			else 
+    else
         self:ShowTimer()
         if (self.showCooldown or self.timerOnButton) and not self.prohibitCooldown then
             CooldownFrame_Set(self.button.cooldown, GetTime()-duration+time, duration, 1)
@@ -372,7 +372,7 @@ function XiTimers:Start(timer, time, duration)
         end
         if self.procFlash then
             self.button.bar:Show()
-            self.button.bar:SetValue(0)            
+            self.button.bar:SetValue(0)
         elseif self.barTimer <= 0 then
             self.button.bar:Hide()
         end
@@ -413,12 +413,6 @@ function XiTimers:Stop(timer)
     end
     self.stopQuiet = false
 	timerbar.time:SetText("")
---[[ LaYt
-	for i = 1,4 do if self.button.party then  self.button.party[i]:Hide() end end
-        if self.button.player then self.button.player:Hide() end
-
-	self.button.rangeCount:SetText("")
--- /LaYt]]
 		timerbar:SetValue(0)
     self:HideTimerBar(timer)
     if timer == 1 then
@@ -531,7 +525,7 @@ function XiTimers:ShowTimerBar(nr)
     self.timerBars[nr]:Show()
         self.timerBars[nr].background:Show()
         self.timerBars[nr].background:SetValue(1)
-    end
+end
 
 -- display functions
 

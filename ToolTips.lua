@@ -137,7 +137,7 @@ function TotemTimers.WeaponButtonTooltip(self)
 			GameTooltip:AddLine("OffHand: |T"..icon..":0|t "..spell)
 		end
 	end
-	
+
 		GameTooltip:AddLine(" ")
     local s = self:GetAttribute("spell1")
 	

@@ -52,7 +52,7 @@ function TTActionBars:new(numbuttons, parent, secondanchor, directionanchor, bar
 		b:SetHeight(36)
             b:SetNormalTexture(nil)
         b.icon:Show()
-		
+
 		b:SetAttribute("_childupdate-show", [[if self:GetAttribute("alwaysshow") or self:GetAttribute("inactive") then return end
                                                if message then 
                                                    self:Show()
@@ -100,10 +100,10 @@ function TTActionBars:new(numbuttons, parent, secondanchor, directionanchor, bar
 		b:SetAttribute("*type1", "spell")
         b:SetAttribute("*type2", nil)
 		
-		if bartype ~= "weapontimer" then 
+        if bartype ~= "weapontimer" then
 			b.ShowTooltip = TotemTimers.TotemTooltip
 		else
-			b.ShowTooltip = TotemTimers.WeaponBarTooltip		 
+            b.ShowTooltip = TotemTimers.WeaponBarTooltip
 		end
         b.HideTooltip = function(self) GameTooltip:Hide() end
         
@@ -180,38 +180,8 @@ function TTActionBars:new(numbuttons, parent, secondanchor, directionanchor, bar
                                                             self:GetParent():SetAttribute("doublespell2", nil)
                                                         end
                                                 if not self:GetAttribute("alwaysshow") then
-                    self:GetParent():ChildUpdate("show", true)
-        end
-			]])
-            
-												-- if button ~= "LeftButton" then
-                                                    -- if self:GetAttribute("*spell1") then
-                                                        -- local b = 1
-                                                        -- if IsShiftKeyDown() then
-                                                            -- b = 2 
-                                                            -- if self:GetParent():GetAttribute("OpenMenu") == "RightButton" then
-                                                                -- b = 3
-                                                            -- end
-                                                        -- end
-                                                        -- if b == 1 then
-                                                            -- self:GetParent():SetAttribute("doublespell1", nil)
-                                                            -- self:GetParent():SetAttribute("doublespell2", nil)
-                                                        -- end
-                                                        -- self:GetParent():SetAttribute("type"..b, "spell")
-                                                        -- self:GetParent():SetAttribute("spell"..b, self:GetAttribute("*spell1"))
-                                                    -- elseif not IsShiftKeyDown() then
-                                                        -- self:GetParent():SetAttribute("doublespell1", self:GetAttribute("doublespell1"))
-                                                        -- self:GetParent():SetAttribute("doublespell2", self:GetAttribute("doublespell2"))
-                                                        -- self:GetParent():SetAttribute("type1", "macro")
-                                                        -- self:GetParent():SetAttribute("macrotext1", "/cast [@none] "..self:GetAttribute("doublespell1").."\n/use 16\n/click StaticPopup1Button1")
-														-- self:GetParent():SetAttribute("type2", "macro")
-                                                        -- self:GetParent():SetAttribute("macrotext2", "/cast [@none] "..self:GetAttribute("doublespell2").."\n/use 17\n/click StaticPopup1Button1")
-                                                        -- self:GetParent():SetAttribute("ds",1)
-                                                    -- end
-                                                -- end
-                                                -- if not self:GetAttribute("alwaysshow") then
-                                                    -- self:GetParent():ChildUpdate("show", true)
-                                                -- end]])
+                    self:GetParent():ChildUpdate("show", false)
+              end]])
 	end
             
 	end
@@ -250,7 +220,6 @@ function TTActionBars:SetSpell(nr, spell, asname)
     if type(spell)=="number" then button:SetAttribute("spellname", GetSpellInfo(spell)) end
 	if asname and type(spell) == "number" then
 		button:SetAttribute("spellid", spell)
-	--	spell = TotemTimers.SpellNames[spell]	
 		spell = TotemTimers.GetMaxRank(spell)		-- LaYt 1.26
 	end
 	button:SetAttribute("*spell1", spell)
