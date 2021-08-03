@@ -382,9 +382,11 @@ function TotemTimers.UpdateMacro()
         local _, free = GetNumMacros()
         local nrCast = GetMacroIndexByName("TT Cast")
 		local nrBuff = GetMacroIndexByName("TT Buff")
-		
+
         if  nrCast~=0 or free<18 then
 			local sequence = "/castsequence reset=combat/"..TotemTimers.ActiveProfile.MacroReset.." ";
+        
+        local currentTotems = {} -- table holding each totem's name, used for future macro generation
         local timers = XiTimers.timers
         for i=1,4 do
             local timer = timers[i]
@@ -393,6 +395,7 @@ function TotemTimers.UpdateMacro()
                 if spell then
                     sequence = sequence .. spell..", "
                 end
+                currentTotems[i] = spell
             end
         end
         sequence = strsub(sequence, 1, strlen(sequence)-2)
@@ -402,6 +405,22 @@ function TotemTimers.UpdateMacro()
         else
             EditMacro(nr, "TT Cast", nil, sequence)
         end
+
+        -- creates 4 additional macros, one for each totem type
+        for i=1,4 do 
+            local _, free = GetNumMacros()
+            local index = GetMacroIndexByName(macroName)
+            if (index ~= 0 or free < 18) and currentTotems[i] ~= nil then
+                local macroName = "Totem" .. tostring(i)
+                local macroBody = "/cast " .. currentTotems[i]
+                if index == 0 then 
+                    CreateMacro(macroName, "INV_MISC_QUESTIONMARK", macroBody, true)
+                else 
+                    EditMacro(index, macroName, nil, macroBody)
+                end
+            end
+        end
+
 		end 
 		_, free = GetNumMacros()
 		if nrBuff~=0 or free<18 then
