@@ -410,8 +410,8 @@ function TotemTimers.UpdateMacro()
         for i=1,4 do 
             local _, free = GetNumMacros()
             local index = GetMacroIndexByName(macroName)
+            local macroName = "Totem" .. tostring(i)
             if (index ~= 0 or free < 18) and currentTotems[i] ~= nil then
-                local macroName = "Totem" .. tostring(i)
                 local macroBody = "/cast " .. currentTotems[i]
                 if index == 0 then 
                     CreateMacro(macroName, "INV_MISC_QUESTIONMARK", macroBody, true)
