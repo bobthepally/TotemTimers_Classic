@@ -410,7 +410,7 @@ function TotemTimers.UpdateMacro()
         for i=1,4 do 
             local _, free = GetNumMacros()
             local macroName = "Totem" .. tostring(i)
-            print("macroName: " .. macroName) -- for debugging
+            --print("macroName: " .. macroName) -- for debugging
             local index = GetMacroIndexByName(macroName)
             if (index ~= 0 or free < 18) and currentTotems[i] ~= nil then
                 local macroBody = "/cast " .. currentTotems[i]
