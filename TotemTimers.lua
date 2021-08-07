@@ -409,8 +409,9 @@ function TotemTimers.UpdateMacro()
         -- creates 4 additional macros, one for each totem type
         for i=1,4 do 
             local _, free = GetNumMacros()
-            local index = GetMacroIndexByName(macroName)
             local macroName = "Totem" .. tostring(i)
+            print("macroName: " .. macroName) -- for debugging
+            local index = GetMacroIndexByName(macroName)
             if (index ~= 0 or free < 18) and currentTotems[i] ~= nil then
                 local macroBody = "/cast " .. currentTotems[i]
                 if index == 0 then 
